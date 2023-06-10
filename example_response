@@ -1,0 +1,31 @@
+You can use a regular expression to match the different patterns and parse the ChatGPT output. Here's a sample Python function to parse the output into an array of objects labeled 'text', 'code', or 'language':
+
+```python
+import re
+
+def parse_chatgpt_output(output):
+    parsed_output = []
+    pattern = re.compile(
+        r"(?P<text>[^`]*)"  # Match non-backquote text
+        r"(`{1,2}(?P<code>[^`]*)`{1,2})?"  # Match single or double backquote-delimited code
+        r"(`{3}(?P<language>\w+)?\n(?P<code_block>[\s\S]*?)`{3})?"  # Match triple backquote-delimited code block with optional language
+    )
+
+    for match in pattern.finditer(output):
+        if match.group("text").strip():
+            parsed_output.append({"type": "text", "content": match.group("text").strip()})
+        if match.group("code"):
+            parsed_output.append({"type": "code", "content": match.group("code")})
+        if match.group("language") and match.group("code_block"):
+            parsed_output.append(
+                {
+                    "type": "language",
+                    "content": match.group("code_block"),
+                    "language": match.group("language"),
+                }
+            )
+
+    return parsed_output
+```
+
+You can use this `parse_chatgpt_output` function to parse the output of ChatGPT into the desired format. It handles both single/double backquote-delimited code and triple backquote-delimited code blocks with optional language.
