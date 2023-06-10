@@ -36,57 +36,6 @@ def fetch_history():
 
     return history
 
-def parse_code_sections(response):
-    code_sections = re.findall(r"`{1,3}(.*?)`{1,3}", response, re.DOTALL)
-    return code_sections
-
-#def display_code_sections(code_sections, focused_index, live):
-    #panels = []
-    #instructions = Text("Press 'j' to navigate to the next code section, 'k' to navigate to the previous code section, 'y' to yank into the system clipboard, or 'q' to quit: ", style="red")
-    #panels.append(instructions)
-
-    #for i, section in enumerate(code_sections):
-        #panel = Text(section, style=("blue" if i == focused_index else ""))
-        #panels.append(panel)
-
-    #live.update(panels)
-
-def handle_keyboard_input(code_sections, live):
-    focused_index = 0
-    display_code_sections(code_sections, focused_index, live)
-    selected_sections = []
-    done = False
-
-    while not done:
-        acted = False
-        key = getch()
-
-        if key == "y":
-            # Get the currently focused code section
-            selected_sections.append(code_sections[focused_index])
-            # Copy the code section to the system clipboard
-            pyperclip.copy('\n\n'.join(selected_sections))
-            acted = True
-
-        elif key == "x":
-            selected_section = code_sections[focused_index]
-            process = subprocess.Popen(["bash", "-c", selected_section])
-            process.wait()
-            acted = True
-
-        elif key == "j":
-            focused_index = min(focused_index + 1, len(code_sections)-1)
-        elif key == "k":
-            focused_index = max(focused_index - 1, 0)
-
-        elif key == "q":
-            done = True
-
-        display_code_sections(code_sections, focused_index, live)
-
-        if acted and len(code_sections) == 1:
-            done = True
-
 def call_openai_api(history):
     history = "```" + history + "```"
     message = ''.join(sys.argv[1:])
@@ -114,23 +63,20 @@ def display_code_sections(segments, focused_index):
     ]
 
     colored_segments.insert(0, Text("Bee: ", style="bold green"))
-    instructions = Text("Press 'j' to navigate to the next code section, 'k' to navigate to the previous code section, 'y' to yank into the system clipboard, or 'q' to quit: \n", style="red")
+    instructions = Text('j - next, k - prev, Tab - next, y - copy, x - execute, q - quit\n', style="red")
     colored_segments.insert(0, instructions)
 
     # Merge the segments together
     response_text = Text().join(colored_segments)
     return response_text
 
-print('')  # Empty line
-
-indent = "   "
-thinking_text = Text(indent + "Bee: Thinking...", style="bold green")
+thinking_text = Text("Bee: Thinking...", style="bold green")
 
 with Live(thinking_text, auto_refresh=False, screen=False) as live:
     history = fetch_history()
     history = remove_ansi_codes(history)
     #response = call_openai_api(history)
-    response = "Test response: ```tail b``` okay? `ls -la` `mkdir -p test` and `touch hello` then `echo 'hi'`" # test response for now
+    response = "Test response: ```tail b``` okay? `ls -la` `mkdir -p test` and `touch hello` then `echo 'hi'` `pip install rich` `rm hello` `rmdir test`" # test response for now
 
     # Split the response into segments
     segments = re.split("`", response)
@@ -181,8 +127,8 @@ with Live(thinking_text, auto_refresh=False, screen=False) as live:
             process = subprocess.Popen(["bash", "-c", selected_section], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out, err = process.communicate()
             # Display the output of the command
-            live.console.print(Text(out.decode()))
-            live.console.print(Text(err.decode()))
+            live.console.print(Text(out.decode()), end="")
+            live.console.print(Text(err.decode()), end="")
 
             #live.console.print('')  # Empty line
             live.refresh()
