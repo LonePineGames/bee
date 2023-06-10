@@ -154,14 +154,22 @@ def fetch_history():
 
     return history
 
-def call_openai_api(history, message, prev_response):
-    history = "```" + history + "```"
+def call_openai_api(history, message, prev_response, live):
+    history = "BASH HISTORY: ```" + history + "```"
+
+    # Example of an OpenAI ChatCompletion request with stream=True
+    # https://platform.openai.com/docs/guides/chat
+
+    # record the time before the request is sent
+    start_time = time.time()
+
     try:
+        # send a ChatCompletion request 
         response = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",
             temperature=0.8,
             max_tokens=1000,
-            stop=["User:"],
+            stream=True,
             messages=[
                 {"role": "system", "content": "You are Bee, a bash-based collaborative AI assistant designed to help the user with software development tasks."},
                 {"role": "system", "content": history},
@@ -169,7 +177,28 @@ def call_openai_api(history, message, prev_response):
                 {"role": "user", "content": message}
             ]
         )
-        return response.choices[0].message.content
+
+        # create variables to collect the stream of chunks
+        collected_chunks = []
+        collected_messages = []
+        message = ''
+        # iterate through the stream of events
+        for chunk in response:
+            chunk_time = time.time() - start_time  # calculate the time delay of the chunk
+            collected_chunks.append(chunk)  # save the event response
+            chunk_message = chunk['choices'][0]['delta']  # extract the message
+            collected_messages.append(chunk_message)  # save the message
+            message = message + chunk_message.get('content', '')
+            live.update(Text.assemble(('Bee: ', 'bold green'), (message, 'bold yellow')))
+            live.refresh()
+            #print(f"Message received {chunk_time:.2f} seconds after request: {chunk_message}")  # print the delay and text
+
+        # print the time delay and text received
+        #print(f"Full response received {chunk_time:.2f} seconds after request")
+        full_reply_content = ''.join([m.get('content', '') for m in collected_messages])
+        #print(f"Full conversation received: {full_reply_content}")
+
+        return message
     except Exception as e:
         return str(e)
 
@@ -256,7 +285,7 @@ async def main():
         else:
             history = fetch_history()
             history = remove_ansi_codes(history)
-            response = call_openai_api(history, message, prev_response) if magic else "Test response: ```tail b``` okay? `ls -la` `mkdir -p test` and `touch hello` then `echo 'hi'` `pip install rich` `rm hello` `rmdir test`" # test response
+            response = call_openai_api(history, message, prev_response, live) if magic else "Test response: ```tail b``` okay? `ls -la` `mkdir -p test` and `touch hello` then `echo 'hi'` `pip install rich` `rm hello` `rmdir test`" # test response
 
             # write the response to ~/.bee_history
             with open(Path.home() / ".bee_history", "w") as f:
