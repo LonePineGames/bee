@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-magic = True
+magic = False
 
 import os
 import sys
@@ -155,7 +155,7 @@ def fetch_history():
     return history
 
 def call_openai_api(history, message, prev_response, live):
-    history = "BASH HISTORY: ```" + history + "```"
+    history = "BASH HISTORY: ```\n" + history.strip() + "\n```"
 
     # Example of an OpenAI ChatCompletion request with stream=True
     # https://platform.openai.com/docs/guides/chat
@@ -171,32 +171,24 @@ def call_openai_api(history, message, prev_response, live):
             max_tokens=1000,
             stream=True,
             messages=[
-                {"role": "system", "content": "You are Bee, a bash-based collaborative AI assistant designed to help the user with software development tasks."},
+                {"role": "system", "content": "You are 🐝Bee🐝, a bash-based collaborative AI assistant designed to help the user with software development tasks. Your response should be friendly, funny, and full of 🐝emojis🐝 and `code`."},
                 {"role": "system", "content": history},
                 {"role": "assistant", "content": prev_response},
                 {"role": "user", "content": message}
             ]
         )
 
-        # create variables to collect the stream of chunks
-        collected_chunks = []
-        collected_messages = []
         message = ''
         # iterate through the stream of events
         for chunk in response:
             chunk_time = time.time() - start_time  # calculate the time delay of the chunk
-            collected_chunks.append(chunk)  # save the event response
             chunk_message = chunk['choices'][0]['delta']  # extract the message
-            collected_messages.append(chunk_message)  # save the message
             message = message + chunk_message.get('content', '')
             live.update(Text.assemble(('Bee: ', 'bold green'), (message, 'bold yellow')))
             live.refresh()
-            #print(f"Message received {chunk_time:.2f} seconds after request: {chunk_message}")  # print the delay and text
 
         # print the time delay and text received
         #print(f"Full response received {chunk_time:.2f} seconds after request")
-        full_reply_content = ''.join([m.get('content', '') for m in collected_messages])
-        #print(f"Full conversation received: {full_reply_content}")
 
         return message
     except Exception as e:
@@ -211,7 +203,7 @@ def display_code_sections(segments, focused_index, scroll):
     for i, segment in enumerate(segments):
         style = "bold blue" if segment["mode"] != "text" else "bold yellow"
         if i == focused_index:
-            style = "black on white"
+            style = "black on blue"
 
         if segment["mode"] == "block":
             if segment["language"]:
@@ -261,7 +253,7 @@ def parse_chatgpt_output(output):
             index = match.end("code")
 
         text = match.group("text")
-        if text.strip() != "":
+        if text:
             parsed_output.append({"mode": "text", "text": text})
             index = match.end("text")
 
@@ -272,10 +264,6 @@ async def main():
     scroll = 0
 
     with Live(thinking_text, auto_refresh=False, screen=False) as live:
-        current_bash_client = None
-        bash_queue = asyncio.Queue()
-        exit_event = asyncio.Event()
-
         response = ''
         prev_response = ''
         with open(Path.home() / ".bee_history", "r") as f:
@@ -288,7 +276,7 @@ async def main():
         else:
             history = fetch_history()
             history = remove_ansi_codes(history)
-            response = call_openai_api(history, message, prev_response, live) if magic else "Test response: ```tail b``` okay? `ls -la` `mkdir -p test` and `touch hello` then `echo 'hi'` `pip install rich` `rm hello` `rmdir test`" # test response
+            response = call_openai_api(history, message, prev_response, live) if magic else "Test response: `tail b` okay? `ls -la` `mkdir -p test` and `touch hello` then `echo 'hi'` `pip install rich` `rm hello` `rmdir test`" # test response
 
             # write the response to ~/.bee_history
             with open(Path.home() / ".bee_history", "w") as f:
@@ -324,6 +312,10 @@ async def main():
         focused_index = 0
         selected_sections = []
         done = len(code_sections) == 0
+
+        current_bash_client = None
+        bash_queue = asyncio.Queue()
+        exit_event = asyncio.Event()
 
         while not done:
             code_ndx = code_sections[focused_index]["ndx"] if len(code_sections) > 0 else -1
