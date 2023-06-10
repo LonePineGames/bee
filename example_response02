@@ -1,0 +1,7 @@
+Sure, here's a one-liner Python code that will calculate the maximum number of ping-pong balls that could fit in the cargo hold of a 747, assuming they are arranged as close-packed spheres:
+
+```
+python -c "import math; cargo_hold_volume = 6100 * 3700 * 2700 * 1000; ping_pong_radius = 20; ping_pong_volume = (4/3) * math.pi * ping_pong_radius**3; ping_pong_count = cargo_hold_volume // ping_pong_volume; print(ping_pong_count)"
+```
+
+This code imports the math library, calculates the cargo hold volume, assumes a radius of 20mm for the ping-pong balls, calculates the volume of a single ping-pong ball, and then divides the cargo hold volume by the ping-pong ball volume to get an estimate of how many ping-pong balls can fit in the cargo hold. The result will be printed to the console.

@@ -214,7 +214,8 @@ def display_code_sections(segments, focused_index, scroll):
             style = "black on white"
 
         if segment["mode"] == "block":
-            result.append(Text(segment["language"]+'\n', style="bold gray30"))
+            if segment["language"]:
+                result.append(Text(segment["language"]+'\n', style="bold gray30"))
             result.append(Text(segment["text"], style=style))
         else:
             result.append(Text(segment["text"], style=style))
@@ -244,7 +245,7 @@ def parse_chatgpt_output(output):
     )
 
     for match in pattern.finditer(output):
-        if match.group("language") and match.group("code_block"):
+        if match.group("code_block"):
             parsed_output.append(
                 {
                     "mode": "block",
@@ -312,6 +313,7 @@ async def main():
             segment["ndx"] = i
 
         code_sections = [segment for segment in segments if segment["mode"] != "text"]
+        #print(len(code_sections), len(segments))
 
         response_text = display_code_sections(segments, -1, scroll)
         live.update(response_text)
@@ -364,8 +366,8 @@ async def main():
             elif key == "q":
                 done = True
 
-            if acted and len(code_sections) == 1:
-                done = True
+            #if acted and len(code_sections) == 1:
+                #done = True
 
         exit_event.set()
         if current_bash_client is not None:
