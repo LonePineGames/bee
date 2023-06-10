@@ -216,7 +216,9 @@ def display_code_sections(segments, focused_index, scroll):
         if segment["mode"] == "block":
             if segment["language"]:
                 result.append(Text(segment["language"]+'\n', style="bold gray30"))
-            result.append(Text(segment["text"], style=style))
+            text = segment["text"]
+            text = text.strip("\n")
+            result.append(Text(text, style=style))
         else:
             result.append(Text(segment["text"], style=style))
 
