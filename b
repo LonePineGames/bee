@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+magic = True
+
 import os
 import sys
 import pyperclip
@@ -152,9 +154,8 @@ def fetch_history():
 
     return history
 
-def call_openai_api(history):
+def call_openai_api(history, message):
     history = "```" + history + "```"
-    message = ''.join(sys.argv[1:])
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4",
@@ -179,8 +180,9 @@ def display_code_sections(segments, focused_index):
     ]
 
     colored_segments.insert(0, Text("Bee: ", style="bold green"))
-    instructions = Text('j - next, k - prev, Tab - next, y - copy, x - execute, q - quit\n', style="red")
-    colored_segments.insert(0, instructions)
+    if len(segments) > 1:
+        instructions = Text('j - next, k - prev, Tab - next, y - copy, x - execute, q - quit', style="red")
+        colored_segments.append(instructions)
 
     # Merge the segments together
     response_text = Text().join(colored_segments)
@@ -193,11 +195,24 @@ async def main():
     bash_queue = asyncio.Queue()
     exit_event = asyncio.Event()
 
-    with Live(thinking_text, auto_refresh=True, screen=False) as live:
-        history = fetch_history()
-        history = remove_ansi_codes(history)
-        #response = call_openai_api(history)
-        response = "Test response: ```tail b``` okay? `ls -la` `mkdir -p test` and `touch hello` then `echo 'hi'` `pip install rich` `rm hello` `rmdir test`" # test response for now
+    with Live(thinking_text, auto_refresh=False, screen=False) as live:
+        response = ''
+        message = ''.join(sys.argv[1:])
+        if message == "":
+            with open(Path.home() / ".bee_history", "r") as f:
+                response = f.read()
+
+        else:
+            history = fetch_history()
+            history = remove_ansi_codes(history)
+            response = call_openai_api(history, message) if magic else "Test response: ```tail b``` okay? `ls -la` `mkdir -p test` and `touch hello` then `echo 'hi'` `pip install rich` `rm hello` `rmdir test`" # test response
+
+            # write the response to ~/.bee_history
+            with open(Path.home() / ".bee_history", "w") as f:
+                f.write(response)
+
+        # Clean up the response
+        response = response.strip() + "\n"
 
         # Split the response into segments
         segments = re.split("`", response)
@@ -216,7 +231,7 @@ async def main():
 
         code_sections = [segment for segment in segments if segment["mode"] == "code"]
 
-        response_text = display_code_sections(segments, 0)
+        response_text = display_code_sections(segments, -1)
         live.update(response_text)
         live.refresh()
 
