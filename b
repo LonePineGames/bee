@@ -114,9 +114,8 @@ def display_code_sections(segments, focused_index):
     ]
 
     colored_segments.insert(0, Text("Bee: ", style="bold green"))
-    instructions = Text("\nPress 'j' to navigate to the next code section, 'k' to navigate to the previous code section, 'y' to yank into the system clipboard, or 'q' to quit: \n", style="red")
+    instructions = Text("Press 'j' to navigate to the next code section, 'k' to navigate to the previous code section, 'y' to yank into the system clipboard, or 'q' to quit: \n", style="red")
     colored_segments.insert(0, instructions)
-    colored_segments.append(Text("\n"))
 
     # Merge the segments together
     response_text = Text().join(colored_segments)
@@ -176,11 +175,16 @@ with Live(thinking_text, auto_refresh=False, screen=False) as live:
 
         elif key == "x":
             selected_section = code_sections[focused_index]['text']
-            live.update(Text("$ " + selected_section + "\n"))
-            live.refresh()
-            process = subprocess.Popen(["bash", "-c", selected_section])
-            process.wait()
-            live.console.print('')  # Empty line
+
+            live.console.print(Text("$ " + selected_section + ""))
+
+            process = subprocess.Popen(["bash", "-c", selected_section], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = process.communicate()
+            # Display the output of the command
+            live.console.print(Text(out.decode()))
+            live.console.print(Text(err.decode()))
+
+            #live.console.print('')  # Empty line
             live.refresh()
             acted = True
 
