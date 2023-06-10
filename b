@@ -173,16 +173,17 @@ def call_openai_api(history, message, prev_response):
     except Exception as e:
         return str(e)
 
-def display_code_sections(segments, focused_index):
+def display_code_sections(segments, focused_index, scroll):
     result = []
-    if len(segments) > 1:
-        instructions = Text('j - next, k - prev, Tab - next, y - copy, x - execute, q - quit\n', style="red")
-        result.append(instructions)
+    newlines = 0
 
     result.append(Text("Bee: ", style="bold green"))
 
     for i, segment in enumerate(segments):
-        style = "bold white" if i == focused_index else ("bold blue" if segment["mode"] != "text" else "bold yellow")
+        style = "bold blue" if segment["mode"] != "text" else "bold yellow"
+        if i == focused_index:
+            style = "black on white"
+
         if segment["mode"] == "block":
             result.append(Text(segment["language"]+'\n', style="bold gray30"))
             result.append(Text(segment["text"], style=style))
@@ -191,6 +192,17 @@ def display_code_sections(segments, focused_index):
 
     # Merge the segments together
     response_text = Text().join(result)
+
+    if scroll > 0:
+        lines = response_text.split("\n")
+        remaining_lines = lines[scroll:]
+        response_text = Text("\n").join(remaining_lines)
+
+    if len(segments) > 1:
+        instructions = Text('a - prev, d - next, w - up, s - down, y - copy, x - execute, q - quit\n', style="red")
+        response_text = Text.assemble(instructions, response_text)
+
+
     return response_text
 
 def parse_chatgpt_output(output):
@@ -225,6 +237,7 @@ def parse_chatgpt_output(output):
 
 async def main():
     thinking_text = Text("Bee: Thinking...", style="bold green")
+    scroll = 0
 
     with Live(thinking_text, auto_refresh=False, screen=False) as live:
         current_bash_client = None
@@ -271,7 +284,7 @@ async def main():
 
         code_sections = [segment for segment in segments if segment["mode"] != "text"]
 
-        response_text = display_code_sections(segments, -1)
+        response_text = display_code_sections(segments, -1, scroll)
         live.update(response_text)
         live.refresh()
 
@@ -281,7 +294,7 @@ async def main():
 
         while not done:
             code_ndx = code_sections[focused_index]["ndx"] if len(code_sections) > 0 else -1
-            response_text = display_code_sections(segments, code_ndx)
+            response_text = display_code_sections(segments, code_ndx, scroll)
             live.update(response_text)
             live.refresh()
 
@@ -308,10 +321,16 @@ async def main():
 
                 bash_queue.put_nowait(selected_section)
 
-            elif key == "j" or key == "\t":
+            elif key == "e" or key == "d" or key == "\t":
                 focused_index = min(focused_index + 1, len(code_sections)-1)
-            elif key == "k":
+            elif key == "a":
                 focused_index = max(focused_index - 1, 0)
+
+            elif key == "," or key == "w":
+                scroll = max(scroll - 1, 0)
+
+            elif key == "o" or key == "s":
+                scroll = scroll + 1
 
             elif key == "q":
                 done = True
