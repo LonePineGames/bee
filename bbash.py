@@ -55,21 +55,25 @@ def remove_ansi_codes(s):
     return ansi_escape.sub('', s)
 
 def fetch_history(context):
-    script_session_file = os.getenv("SCRIPT_SESSION")
+    try:
+        script_session_file = os.getenv("SCRIPT_SESSION")
 
-    if script_session_file is None:
+        if script_session_file is None:
+            return "EMPTY HISTORY"
+
+        script_session_path = Path(script_session_file)
+        if not script_session_path.exists():
+            return "EMPTY HISTORY"
+
+        # Read the last 1000 characters of the file
+        history = script_session_path.read_text()[-context:]
+
+        history = remove_ansi_codes(history)
+
+        return history
+
+    except Exception as e:
         return "EMPTY HISTORY"
-
-    script_session_path = Path(script_session_file)
-    if not script_session_path.exists():
-        return "EMPTY HISTORY"
-
-    # Read the last 1000 characters of the file
-    history = script_session_path.read_text()[-context:]
-
-    history = remove_ansi_codes(history)
-
-    return history
 
 def info_source(context=5000):
     def bash_info_source():

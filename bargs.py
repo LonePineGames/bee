@@ -16,12 +16,15 @@ def parse_args():
     args, unknown = parser.parse_known_args()
 
     if args.version:
-        bui.live.update(Text.assemble(("🐝Bee ", bui.style("name")), ("version 0.1", bui.style("langauge"))))
+        bui.live.console.print(Text.assemble(("🐝 Bee ", bui.style("name")), ("version 0.1", bui.style("code"))))
+        bui.live.update('')
         bui.live.refresh()
         exit()
 
     if args.test:
         bconfig.magic = False
+        if len(unknown) == 0:
+            unknown.append("Hello, Bee!")
 
     #if args.help:
         #bui.live.update(Text.assemble(("🐝 Bee ", bui.style("name")), ("version 0.1", bui.style("code"))))

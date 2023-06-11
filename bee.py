@@ -66,13 +66,13 @@ async def main():
     message = bargs.parse_args()
     #message = bhistory.get_user_message()
 
-    bhistory.save_response(message, "user")
     response = ''
 
     if message == "":
         response = bhistory.get_prev_response()
 
     else:
+        bhistory.save_response(message, "user")
         prompt_messages = collect_prompt_messages()
 
         if not bconfig.curtain:

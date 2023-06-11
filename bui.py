@@ -111,6 +111,9 @@ def update():
     global live
     global focused_index
 
+    if response.startswith(bconfig.name + ":"):
+        response = response[len(bconfig.name + ":"):]
+
     segments = parse_chatgpt_output(response)
     code_sections = [segment for segment in segments if segment["mode"] != "text"]
     code_ndx = code_sections[focused_index]["ndx"] if len(code_sections) > 0 else -1
