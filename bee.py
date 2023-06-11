@@ -68,14 +68,13 @@ async def main():
     if message == "":
         response = bhistory.get_prev_response()
 
-    elif bconfig.magic:
+    else:
         prompt_messages = collect_prompt_messages()
         #print(prompt_messages)
-        #response = bconfig.test_response
-        response = call_openai_api(prompt_messages)
-
-    else:
-        response = bconfig.test_response
+        if bconfig.magic:
+            response = call_openai_api(prompt_messages)
+        else:
+            response = bconfig.test_response
 
     # Clean up the response
     response = response.strip() + "\n"
