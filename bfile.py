@@ -38,7 +38,7 @@ def info_source(role="user"):
         args = sys.argv[1:]
         results = []
         for filename in args:
-            print(filename, os.path.isfile(filename))
+            #print(filename, os.path.isfile(filename))
             # if the file doesn't exist, continue
             if os.path.isfile(filename) == False:
                 continue

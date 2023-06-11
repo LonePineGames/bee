@@ -11,6 +11,7 @@ import bui
 #import bhistory_file as bhistory
 import bhistory
 import bbash
+import bargs
 
 import openai
 from apikey import OPENAI_API_KEY
@@ -38,7 +39,7 @@ def call_openai_api(prompt_messages):
     try:
         # send a ChatCompletion request
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model=bconfig.model,
             temperature=0.8,
             max_tokens=1000,
             stream=True,
@@ -62,8 +63,9 @@ def call_openai_api(prompt_messages):
         return str(e)
 
 async def main():
+    message = bargs.parse_args()
+    #message = bhistory.get_user_message()
 
-    message = bhistory.get_user_message()
     bhistory.save_response(message, "user")
     response = ''
 
