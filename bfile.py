@@ -2,7 +2,8 @@ import os
 import sys
 
 def get_cursor_pos(filename):
-    viminfo_file = os.path.expanduser("~/.local/share/nvim")
+    # This is broken for me
+    viminfo_file = os.path.expanduser("~/.local/share/nvim/shada/main.shada")
     with open(viminfo_file, "r") as f:
         for line in f:
             if line.startswith("'\""):
@@ -15,7 +16,8 @@ def get_cursor_pos(filename):
     return None
 
 def read_around_cursor(filename, num_chars=1500):
-    cursor_pos = get_cursor_pos(filename)
+    cursor_pos = 0
+    #cursor_pos = get_cursor_pos(filename) # vim stuff is broken
     if cursor_pos is None:
         cursor_pos = 0
 
