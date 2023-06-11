@@ -2,8 +2,8 @@
 
 magic = False
 
+import asyncio
 import os
-import sys
 import pyperclip
 from pathlib import Path
 import re
@@ -13,82 +13,18 @@ from rich.panel import Panel
 from rich.console import Console
 from rich import print
 import subprocess
+import sys
 import termios
 import threading
 import time
 import tty
+
 from kbd2 import getkey
+from bshell import bash_client
 
 import openai
 from config import OPENAI_API_KEY
 openai.api_key = OPENAI_API_KEY
-
-import shlex
-import asyncio
-from prompt_toolkit.shortcuts import print_formatted_text
-from prompt_toolkit.styles import Style
-
-async def create_subprocess_shell():
-    shell = await asyncio.create_subprocess_shell(
-        "/bin/bash --norc",
-        stdin=asyncio.subprocess.PIPE,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
-    )
-    return shell
-
-async def bash_client(exit_event, bash_queue, live):
-    #print("bash_client")
-    async def read_shell_output(shell_reader, source):
-        while not exit_event.is_set():
-            line = await shell_reader.readline()
-            if not line:
-                break
-
-            live.console.print(Text(line.decode()), end="")
-            # Define the style for the output text
-            #style = Style.from_dict({"output": "green"})
-            # Print the output above the prompt using the print_formatted_text function.
-            # The end argument is set to "\n" (the default value) to preserve newlines.
-            #message.send(source, line.decode())
-            # print_formatted_text(line.decode(), style=style, end="")
-
-    def append_bash_queue(action):
-        # print("append_bash_queue", bash_command)
-        bash_queue.put_nowait(action['argument'])
-
-    # Create an interactive Bash shell subprocess
-    shell = await asyncio.create_subprocess_shell(
-        "/bin/bash --norc",
-        stdin=asyncio.subprocess.PIPE,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
-    )
-
-    async def run_bash_queue():
-        while not exit_event.is_set():
-            #print("waiting for bash_queue")
-            command = await bash_queue.get()  # Use await bash_queue.get() to retrieve items
-            command = command + '\n'
-            #print(command + "*")
-            shell.stdin.write(command.encode())
-            await shell.stdin.drain()
-
-    tasks = [
-        asyncio.create_task(read_shell_output(shell.stdout, "stdout")),
-        asyncio.create_task(read_shell_output(shell.stderr, "stderr")),
-        asyncio.create_task(run_bash_queue())
-    ]
-
-    # Wait for the exit event to be set.
-    await exit_event.wait()
-
-    # Cancel all tasks.
-    for task in tasks:
-        task.cancel()
-
-    # Wait for all tasks to complete or be canceled.
-    await asyncio.gather(*tasks, return_exceptions=True)
 
 def remove_ansi_codes(s):
     ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
