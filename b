@@ -9,21 +9,14 @@ from pathlib import Path
 import re
 from rich.text import Text
 from rich.live import Live
-from rich.panel import Panel
-from rich.console import Console
-from rich import print
-import subprocess
 import sys
-import termios
-import threading
 import time
-import tty
 
 from kbd2 import getkey
 from bshell import bash_client
 
 import openai
-from config import OPENAI_API_KEY
+from apikey import OPENAI_API_KEY
 openai.api_key = OPENAI_API_KEY
 
 def remove_ansi_codes(s):
