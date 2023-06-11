@@ -19,7 +19,7 @@ openai.api_key = OPENAI_API_KEY
 
 def static_info_source(message, role="system"):
     def static_message():
-        return [{ "content": message, "role": role }]
+        return [{ "role": role, "content": message }]
     return static_message
 
 def collect_prompt_messages():
@@ -76,7 +76,7 @@ async def main():
         prompt_messages = collect_prompt_messages()
 
         if not bconfig.curtain:
-            print(prompt_messages)
+            bui.live.console.print(prompt_messages)
 
         if bconfig.magic:
             response = call_openai_api(prompt_messages)

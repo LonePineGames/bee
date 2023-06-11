@@ -35,20 +35,27 @@ animate "🐝Bee is a command line assistant that helps you with your daily task
 
 sleep 1
 
-# Prompt the user for their OpenAI API key
-# https://platform.openai.com/account/api-keys
-animate "🔑 I need an OpenAI API key to work.\n"
-animate "Please get one at https://platform.openai.com/account/api-keys\n"
-echo -ne "${BBLU}"
-read -p "Please enter your OpenAI API key 🔑: " OPENAI_API_KEY
-# Write the API key to apikey.py
-echo "OPENAI_API_KEY = \"$OPENAI_API_KEY\"" > apikey.py
+# Check to see if apikey.py exists
+if [ -f apikey.py ]; then
+    animate "🔑 I found an OpenAI API key in apikey.py.\n"
+    sleep 1
+    animate "I'll use that one.\n\n"
+    sleep 1
 
-sleep 1
+else
+    # Prompt the user for their OpenAI API key
+    # https://platform.openai.com/account/api-keys
+    animate "🔑 I need an OpenAI API key to work.\n"
+    animate "Please get one at https://platform.openai.com/account/api-keys\n"
+    echo -ne "${BBLU}"
+    read -p "Please enter your OpenAI API key 🔑: " OPENAI_API_KEY
+    # Write the API key to apikey.py
+    #echo "OPENAI_API_KEY = \"$OPENAI_API_KEY\"" > apikey.py
+    sleep 1
 
-animate "${BYLW}Key saved! 🔑\n\n"
-
-sleep 1
+    animate "${BYLW}Key saved! 🔑\n\n"
+    sleep 1
+fi
 
 # Read ~/.bashrc into a variable
 user_bashrc=$(cat ~/.bashrc)
@@ -57,10 +64,8 @@ user_bashrc=$(cat ~/.bashrc)
 if [[ $user_bashrc == *"### 🐝BEE HEADER END ###"* ]]; then
     animate "Looks like Bee was previously installed!\n"
     sleep 1
-    animate "I'll remove the old version first...\n\n"
+    animate "I'll clean up the old version first...\n\n"
     ./uninstall.sh > /dev/null
-    sleep 1
-
 fi
 
 bee_bashrc=$(cat ./bashrc.sh)
@@ -85,16 +90,14 @@ echo -e "$user_bashrc" > ~/.bashrc
 source ~/.bashrc
 
 animate "${BYLW} 🐝 _______  _______  _______  _______  _______  _______  _______  _______  _______  _______ _______  _______  _______  _______  _______  _______  _______  _______  _______  _______\n"
-
 sleep 1
 
 animate "\nBee 🐝 installation complete!\n\n"
-
 sleep 1
 
 animate "Buzz buzz! Using me is easy! 🤗\n"
+sleep 1
 animate "Just type '${BBLU}b \"<your question>\"${BYLW}' in your terminal and I'll be there to help you out! \n\n"
-
 sleep 1
 
 animate "    🐝   $ ${BBLU}b \"How do I configure my git username?\"${BYLW}\n"
@@ -108,8 +111,15 @@ sleep 1
 animate "    🐝   $ ${BBLU}b \"Show me how to spawn a new thread in {favorite language}.\"  ${BYLW}"
 sleep 1
 
-animate "\n\n👉 If you want to use GPT-4, just type b4 instead of b!\n"
+animate "\n\n👉 I'll give you answers -- plus code you can copy or run immediately. Press X to execute and Y to copy. Use WASD to navigate. \n"
+sleep 1
+animate "👉 Press Q to quit -- then type 'b' with no arguments to see my last reply again.\n\n"
+sleep 1
+
+animate "👉 If you want to use GPT-4, just type b4 instead of b! \n"
+sleep 1
 animate "    🐝   $ ${BBLU}b4 \"Help me with this horrible C++ error message.\"${BYLW}\n"
+sleep 1
 animate "        Then I'll be even smarter! (Requires GPT-4 API Access) \n"
 sleep 1
 
@@ -117,6 +127,7 @@ sleep 1
 # eyes emoji: 👀
 
 animate "👉 Just so you know, I can 👀see your: \n"
+sleep 1
 animate "    - bash session history\n"
 sleep 1
 animate "    - git repo status\n"
@@ -129,15 +140,13 @@ animate "   All this information really helps me out! 😃\n"
 sleep 1
 
 animate "👉 If you want to configure me, open up this file: ${BBLU}bconfig.py${BYLW}.\n"
+sleep 1
 animate "    You can change colors, change the keymap, even write your own plugins! \n\n"
-
 sleep 1
 
 animate "👉 For more options, type '${BBLU}b --help${BYLW}'\n"
-
 sleep 1
 
 animate "\n🐝 Have fun coding! 🐝\n"
-
 sleep 1
 

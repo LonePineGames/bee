@@ -27,6 +27,9 @@ Buzz buzz! Once you have me installed, just type 'b "<your question>"' in your t
     🐝   $ b main.cpp "I don't understand this error message. Can you help?"
     🐝   $ b "Show me how to spawn a new thread in {favorite language}."
 
+👉 I'll give you answers -- plus code you can copy or run immediately. Press x to execute and y to copy. Use WASD to navigate.
+👉 Press q to quit -- then type 'b' with no arguments to see my last reply again.
+
 👉 If you want to use GPT-4, just type b4 instead of b!
     🐝   $ b4 "Help me with this horrible C++ error message."
         Then I'll be even smarter! (Requires GPT-4 API Access)

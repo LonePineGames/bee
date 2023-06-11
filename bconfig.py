@@ -1,6 +1,6 @@
 name = "🐝Bee"
 magic = True
-curtain = True
+curtain = False
 model = "gpt-3.5-turbo"
 test_response = "Test response: `tail b` okay? `ls -la` `mkdir -p test` and `touch hello` then `echo 'hi'` `pip install rich` `rm hello` `rmdir test`"
 
