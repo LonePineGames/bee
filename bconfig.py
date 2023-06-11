@@ -18,12 +18,15 @@ styles = {
     'shell-output': 'white',
 };
 
+import bee
+import bui
+
+# Plugins
 import bbash
 import bhistory
 import byank
 import bgit
-import bui
-import bee
+import bfile
 
 keymap = {
     'x': bbash.execute,
@@ -46,5 +49,6 @@ info_sources = [
     bbash.info_source(context=5000),
     byank.info_source(),
     bhistory.info_source(turns=2),
+    bfile.info_source(),
 ];
 

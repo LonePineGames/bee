@@ -70,7 +70,7 @@ async def main():
 
     else:
         prompt_messages = collect_prompt_messages()
-        #print(prompt_messages)
+        print(prompt_messages)
         if bconfig.magic:
             response = call_openai_api(prompt_messages)
         else:
