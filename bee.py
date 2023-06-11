@@ -50,7 +50,7 @@ def call_openai_api(prompt_messages):
             chunk_time = time.time() - start_time  # calculate the time delay of the chunk
             chunk_message = chunk['choices'][0]['delta']  # extract the message
             message = message + chunk_message.get('content', '')
-            bui.live.update(Text.assemble(('Bee: ', 'bold green'), (message, 'bold yellow')))
+            bui.live.update(Text.assemble(('Bee: ', bui.style('name')), (message, bui.style('text'))))
             bui.live.refresh()
 
         # print the time delay and text received
@@ -93,7 +93,7 @@ async def main():
         if action is not None:
             action()
         else:
-            bui.live.console.print("Unrecognized key: " + key, style="bold red")
+            bui.live.console.print("Unrecognized key: " + key, style=bui.style('error'))
 
         bui.update()
 

@@ -1,12 +1,25 @@
+magic = False
+test_response = "Test response: `tail b` okay? `ls -la` `mkdir -p test` and `touch hello` then `echo 'hi'` `pip install rich` `rm hello` `rmdir test`"
+instructions = 'a - prev, d - next, w - up, s - down, y - copy, x - execute, q - quit'
+
+styles = {
+    'instructions': 'red',
+    'name': 'bold green',
+    'text': 'bold yellow',
+    'code': 'bold blue',
+    'block': 'bold blue',
+    'language': 'gray30',
+    'focused': 'black on blue',
+    'error': 'bold red',
+    'bash': 'white',
+};
+
 import bbash
 import bhistory
 import byank
 #import bgit
 import bui
 import bee
-
-magic = True
-test_response = "Test response: `tail b` okay? `ls -la` `mkdir -p test` and `touch hello` then `echo 'hi'` `pip install rich` `rm hello` `rmdir test`"
 
 keymap = {
     'x': bbash.execute,

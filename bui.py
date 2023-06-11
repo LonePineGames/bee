@@ -9,6 +9,7 @@ import sys
 import time
 
 import bee
+import bconfig
 
 scroll = 0
 focused_index = 0
@@ -17,7 +18,10 @@ segments = []
 code_sections = []
 done = False
 
-thinking_text = Text("Bee: Thinking...", style="bold green")
+def style(style_name):
+    return bconfig.styles.get(style_name, None)
+
+thinking_text = Text("Bee: Thinking...", style=style('thinking'))
 live = Live(thinking_text, auto_refresh=False, screen=False)
 live.start()
 
@@ -34,21 +38,21 @@ def display(segments, focused_index, scroll):
     result = []
     newlines = 0
 
-    result.append(Text("Bee: ", style="bold green"))
+    result.append(Text("Bee: ", style=style('name')))
 
     for i, segment in enumerate(segments):
-        style = "bold blue" if segment["mode"] != "text" else "bold yellow"
+        seg_style = style(segment["mode"])
         if i == focused_index:
-            style = "black on blue"
+            seg_style = style("focused")
 
         if segment["mode"] == "block":
             if segment["language"]:
-                result.append(Text(segment["language"]+'\n', style="bold gray30"))
+                result.append(Text(segment["language"]+'\n', style=style('language')))
             text = segment["text"]
             text = text.strip("\n")
-            result.append(Text(text, style=style))
+            result.append(Text(text, style=seg_style))
         else:
-            result.append(Text(segment["text"], style=style))
+            result.append(Text(segment["text"], style=seg_style))
 
     # Merge the segments together
     response_text = Text().join(result)
@@ -58,10 +62,9 @@ def display(segments, focused_index, scroll):
         remaining_lines = lines[scroll:]
         response_text = Text("\n").join(remaining_lines)
 
-    if len(segments) > 1:
-        instructions = Text('a - prev, d - next, w - up, s - down, y - copy, x - execute, q - quit\n', style="red")
+    if len(segments) > 1 and bconfig.instructions:
+        instructions = Text(bconfig.instructions + '\n', style=style('instructions'))
         response_text = Text.assemble(instructions, response_text)
-
 
     return response_text
 
