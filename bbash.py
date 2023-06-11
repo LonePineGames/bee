@@ -14,7 +14,7 @@ async def bash_client(exit_event, bash_queue, live):
             if not line:
                 break
 
-            live.console.print(Text(line.decode()), end="")
+            live.console.print(Text(line.decode(), style=bui.style('shell-output')), end="")
 
     def append_bash_queue(action):
         bash_queue.put_nowait(action['argument'])
@@ -49,7 +49,6 @@ async def bash_client(exit_event, bash_queue, live):
 
     # Wait for all tasks to complete or be canceled.
     await asyncio.gather(*tasks, return_exceptions=True)
-
 
 def remove_ansi_codes(s):
     ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
@@ -92,7 +91,7 @@ def execute():
 
     selected_section = bui.get_selection()
 
-    bui.live.console.print(Text("$ " + selected_section + ""))
+    bui.live.console.print(Text("$ " + selected_section + "", style=bui.style('shell-command')))
     bui.live.refresh()
 
     if current_bash_client is None:

@@ -21,7 +21,7 @@ done = False
 def style(style_name):
     return bconfig.styles.get(style_name, None)
 
-thinking_text = Text("Bee: Thinking...", style=style('thinking'))
+thinking_text = Text(bconfig.name + ": Thinking...", style=style('thinking'))
 live = Live(thinking_text, auto_refresh=False, screen=False)
 live.start()
 
@@ -38,7 +38,7 @@ def display(segments, focused_index, scroll):
     result = []
     newlines = 0
 
-    result.append(Text("Bee: ", style=style('name')))
+    result.append(Text(bconfig.name + ": ", style=style('name')))
 
     for i, segment in enumerate(segments):
         seg_style = style(segment["mode"])
