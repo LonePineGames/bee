@@ -75,14 +75,27 @@ def fetch_history(context):
     except Exception as e:
         return "EMPTY HISTORY"
 
-def info_source(context=5000):
-    def bash_info_source():
-        history = fetch_history(context)
+def history_info_source(characters=5000):
+    def bash_history_info_source():
+        history = fetch_history(characters)
         history = "BASH HISTORY: ```\n" + history.strip() + "\n```"
 
         return [{"role": "system", "content": history}]
 
-    return bash_info_source
+    return bash_history_info_source
+
+def context_info_source():
+    def bash_context_info_source():
+        user = os.getenv("USER")
+        host = os.getenv("HOSTNAME")
+        cwd = os.getcwd()
+        uname = subprocess.check_output("uname -a", shell=True).decode().strip()
+
+        context = f"USER: {user}\nHOST: {host}\nCWD: {cwd}\nUNAME: {uname}"
+
+        return [{"role": "system", "content": context}]
+
+    return bash_context_info_source
 
 current_bash_client = None
 bash_queue = None
