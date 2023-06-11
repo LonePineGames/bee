@@ -17,6 +17,7 @@ import termios
 import threading
 import time
 import tty
+from kbd2 import getkey
 
 import openai
 from config import OPENAI_API_KEY
@@ -88,52 +89,6 @@ async def bash_client(exit_event, bash_queue, live):
 
     # Wait for all tasks to complete or be canceled.
     await asyncio.gather(*tasks, return_exceptions=True)
-
-import sys
-import select
-import tty
-import termios
-
-def isData():
-    return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
-
-async def getkey():
-    old_settings = termios.tcgetattr(sys.stdin)
-    try:
-        tty.setcbreak(sys.stdin.fileno())
-        while True:
-            if isData():
-                c = sys.stdin.read(1)
-                return c
-            await asyncio.sleep(0.1)
-
-    finally:
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
-
-
-#def getkey():
-    #old_settings = termios.tcgetattr(sys.stdin)
-    #tty.setcbreak(sys.stdin.fileno())
-    #try:
-        #b = os.read(sys.stdin.fileno(), 3).decode()
-        #if len(b) == 3:
-            #k = ord(b[2])
-        #else:
-            #k = ord(b)
-        #key_mapping = {
-            #127: 'backspace',
-            #10: 'return',
-            #32: 'space',
-            #9: 'tab',
-            #27: 'esc',
-            #65: 'up',
-            #66: 'down',
-            #67: 'right',
-            #68: 'left'
-        #}
-        #return key_mapping.get(k, chr(k))
-    #finally:
-        #termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
 def remove_ansi_codes(s):
     ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
