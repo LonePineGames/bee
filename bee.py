@@ -8,6 +8,7 @@ import time
 from kbd2 import getkey
 import bconfig
 import bui
+#import bhistory_file as bhistory
 import bhistory
 import bbash
 
@@ -62,7 +63,8 @@ def call_openai_api(prompt_messages):
 
 async def main():
 
-    message = ''.join(sys.argv[1:])
+    message = bhistory.get_user_message()
+    bhistory.save_response(message, "user")
     response = ''
 
     if message == "":
@@ -84,7 +86,7 @@ async def main():
 
     bui.load_response(response)
     bui.update()
-    bhistory.save_response(response)
+    bhistory.save_response(response, "assistant")
 
     bui.done = bui.num_code_sections() == 0
 
@@ -99,7 +101,9 @@ async def main():
 
         bui.update()
 
+    # TODO: find a modular way to close plugins
     bbash.cancel()
+    bhistory.close()
 
 if __name__ == "__main__":
     asyncio.run(main())

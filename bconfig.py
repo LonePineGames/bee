@@ -25,6 +25,7 @@ import bui
 # Plugins
 import bbash
 import bhistory
+#import bhistory_file as bhistory
 import byank
 import bgit
 import bfile
@@ -49,7 +50,7 @@ info_sources = [
     bgit.info_source('status,log:5'),
     bbash.info_source(context=5000),
     byank.info_source(),
-    bhistory.info_source(turns=2),
+    bhistory.info_source(turns=4),
     bfile.info_source(),
 ];
 
