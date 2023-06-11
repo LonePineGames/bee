@@ -19,6 +19,14 @@ def info_source(role="system"):
 def copy():
     global selected_sections
 
-    selected_sections.append(bui.get_selection())
+    selection = bui.get_selection()
+
+    if len(selected_sections) > 0 and selection == selected_sections[-1]:
+        selected_sections = [selection]
+
+    elif selection in selected_sections:
+        return
+
+    selected_sections.append(selection)
     pyperclip.copy('\n\n'.join(selected_sections))
 
