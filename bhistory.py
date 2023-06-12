@@ -2,6 +2,9 @@ import sqlite3
 import os
 import sys
 from datetime import datetime
+from pathlib import Path
+
+history_file_path = Path.home() / ".bee_history"
 
 # Get the user's home directory
 home_dir = os.path.expanduser("~")
@@ -23,6 +26,10 @@ def save_response(response, role):
     values = (role, response, timestamp)
     c.execute("INSERT INTO history VALUES (?, ?, ?)", values)
     conn.commit()
+
+    if role == "assistant":
+        with open(history_file_path, "w") as f:
+            f.write(response)
 
 # Retrieve the conversation history from the database
 def get_history(turns):
