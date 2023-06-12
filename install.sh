@@ -118,7 +118,7 @@ sleep 1
 
 animate "👉 If you want to use GPT-4, just type b4 instead of b! \n"
 sleep 1
-animate "    🐝   $ ${BBLU}b4 \"Help me with this horrible C++ error message.\"${BYLW}\n"
+animate "    🐝   $ ${BBLU}b4 \"Help me with this horrible C++ error message :(\"${BYLW}\n"
 sleep 1
 animate "        Then I'll be even smarter! (Requires GPT-4 API Access) \n"
 sleep 1
