@@ -78,6 +78,9 @@ def fetch_history(context):
 
 def history_info_source(characters=5000):
     def bash_history_info_source():
+        if characters <= 0:
+            return []
+
         history = fetch_history(characters)
         history = "BASH HISTORY: ```\n" + history.strip() + "\n```"
 

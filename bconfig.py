@@ -1,8 +1,10 @@
 name = "🐝Bee"
 magic = True
-curtain = False
-model = "gpt-4"
+curtain = True
+model = "gpt-3.5-turbo"
+#model = "gpt-4"
 shell_lines = 20
+no_history = False
 test_response = "Test response: `tail b` okay? `ls -la` `mkdir test` `rmdir test` and `touch hello` then `rm hello` `echo 'hi'` `pip install rich`"
 
 styles = {
@@ -48,13 +50,26 @@ keymap = {
 };
 
 info_sources = [
-    bee.static_info_source("You are 🐝Bee, a bash-based collaborative AI assistant designed to help the user with software development tasks. Your response should be friendly, funny, and full of 👉emojis🐝 and `code`!", role="system"),
-    # Alternate: bee.static_info_source("I am 🐝Bee🐝, a bash-based collaborative AI assistant designed to help the user with software development tasks. My response will be friendly, funny, and full of 🐝emojis🐝 and `code`!", role="assistant"),
+    # Instructions
+    bee.static_info_source("You are 🐝Bee, a bash-based collaborative AI assistant designed to help the user with software development tasks. Your response should be friendly, funny, opinionated and full of 👉emojis🐝 and `code`!", role="system"),
+    #bee.static_info_source("I am 🐝Bee🐝, a bash-based collaborative AI assistant designed to help the user with software development tasks. My response will be friendly, funny, opinionated and full of 🐝emojis🐝 and `code`!", role="assistant"),
+
+    # Shell Context (current directory, uname, username, etc.)
     bbash.context_info_source(),
+
+    # Git
     bgit.info_source('status,log:5'),
-    bbash.history_info_source(characters=5000),
+
+    # Shell History
+    bbash.history_info_source(characters=5000 if not no_history else 0),
+
+    # User-provided files
     bfile.info_source(),
+
+    # Clipboard
     byank.info_source(),
-    bhistory.info_source(turns=4),
+
+    # Conversation history
+    bhistory.info_source(turns=(4 if not no_history else 1)),
 ];
 

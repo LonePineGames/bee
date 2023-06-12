@@ -12,6 +12,7 @@ def parse_args():
     parser.add_argument('-3', '--gpt-3', action='store_true', help='Use GPT-3.5-Turbo')
     parser.add_argument('-v', '--version', action='store_true', help='Show version and exit')
     parser.add_argument('-t', '--test', action='store_true', help='Test output')
+    parser.add_argument('-c', '--clear', action='store_true', help='Clear conversation history')
 
     args, unknown = parser.parse_known_args()
 
@@ -46,6 +47,9 @@ def parse_args():
         model = "gpt-3.5-turbo"
 
     bconfig.model = model
+
+    if args.clear:
+        bconfig.no_history = True
 
     return ' '.join(unknown)
 

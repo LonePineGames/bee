@@ -63,6 +63,10 @@ def call_openai_api(prompt_messages):
         return str(e)
 
 async def main():
+    thinking_text = Text(bconfig.name + ": Thinking...", style=bui.style('thinking'))
+    bui.live.update(thinking_text)
+    bui.live.refresh()
+
     message = bargs.parse_args()
     #message = bhistory.get_user_message()
 
