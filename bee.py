@@ -16,8 +16,6 @@ import bbash
 import bargs
 
 import openai
-from apikey import OPENAI_API_KEY
-openai.api_key = OPENAI_API_KEY
 
 def static_info_source(message, role="system"):
     def static_message():
@@ -89,6 +87,17 @@ def get_bee_response(message):
                 print(prompt_messages)
 
         if bconfig.magic:
+            try:
+                from apikey import OPENAI_API_KEY
+                openai.api_key = OPENAI_API_KEY
+            except ImportError:
+                msg = "Please run ./install.sh to configure your OpenAI API key."
+                if bui.live is not None:
+                    bui.live.console.print(msg, style=bui.style('error'))
+                else:
+                    print(msg)
+                exit(1)
+
             response = call_openai_api(prompt_messages)
             response = response.strip() + "\n"
             bhistory.save_response(response, "assistant")

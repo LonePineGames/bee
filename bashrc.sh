@@ -16,5 +16,13 @@ alias bhistory="b --history=20"
 # Welcome message -- remove it if you don't like it
 bee_narrates.sh
 
+# Bee Tutorial
+if [ ! -f -path-/.bee_tutorial_ran ]
+then
+    touch -path-/.bee_tutorial_ran
+    # run the tutorial
+    -path-/bee_tutorial.sh
+fi
+
 ### 🐝BEE HEADER END ###
 

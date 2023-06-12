@@ -34,11 +34,24 @@ if [[ $user_bashrc == *"### 🐝BEE HEADER END ###"* ]]; then
   sleep 1
   animate "Please 🔁restart your terminal💻 to complete the uninstall.\n"
   sleep 1
+
 else
-  animate "Bee 🐝 is not installed."
+  animate "Bee 🐝 is not installed.\n"
   sleep 1
 fi
 
-#echo -e "\n"
+# delete apikey.py if it exists
+if [[ -f ./apikey.py ]]; then
+  animate "\nWould you like to delete your API key? (y/n) "
+  read -n 1 -r
+  echo -e "\n"
 
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    animate "Deleting API key... \n"
+    rm ./apikey.py
+    sleep 1
+    animate "API key deleted.\n"
+    sleep 1
+  fi
+fi
 
