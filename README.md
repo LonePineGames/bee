@@ -32,21 +32,23 @@ Buzz buzz! Once you have me installed, just type 'b "<your question>"' in your t
 👉 Press Q to quit -- then type 'b' with no arguments to see my last reply again.
 
 👉 If you want to use GPT-4, just type b4 instead of b!
-    🐝   $ b4 "Help me with this horrible C++ error message :("
+    🐝   $ b4 "HELP ME! What is this gnarly C++ error message? :("
         Then I'll be even smarter! (Requires GPT-4 API Access)
 👉 Just so you know, I can 👀see your:
     - bash session history
     - git repo status
     - system clipboard contents
     - any file you pass me by typing 'b file.name'
-   All this information really helps me out! 😃
+    (OpenAI sees this too 🤔)
+   But all this information really helps me out! 😃
+
 👉 More ways to use me:
    - 'b' to see my last reply
    - 'bee' to use your $EDITOR to ask your question.
        Then bash won't get in the way!
        (Stuck in vim? Ask me how to configure your $EDITOR)
    - 'bemoji finger pointing right'
-       I can help you find an emoji!
+       I can help you search for an emoji!🌼🌸💐🏵️
    - 'ps aux --sort=%mem | b "What's using all my memory?"'
        Pipe any command to me to get a quick explanation.
    - './configure || b4 "What do I need to install? Use sudo." | grep "sudo apt"'
@@ -57,4 +59,3 @@ Buzz buzz! Once you have me installed, just type 'b "<your question>"' in your t
 👉 For more options, type 'b --help'
 
 🐝 Have fun coding! 🐝
-

@@ -23,7 +23,7 @@ function animate {
   done
 }
 
-animate "${BYLW} 🐝 _______  _______  _______  _______  _______  _______  _______  _______  _______  _______ _______  _______  _______  _______  _______  _______  _______  _______  _______  _______\n"
+animate "${BYLW}🐝 _______  _______  _______  _______  _______  _______  _______  _______  _______  _______ _______  _______  _______  _______  _______  _______  _______  _______  _______  _______\n"
 
 ./b -v
 
@@ -57,7 +57,7 @@ else
     sleep 1
 fi
 
-animate "${BYLW}Let's make sure that you have the python requirements installed."
+animate "${BYLW}Let's make sure that you have the python requirements installed... \n \n"
 sleep 1
 
 # Check to see if python3 is installed
@@ -80,7 +80,7 @@ fi
 pip3 install -r requirements.txt
 
 if [ $? -eq 0 ]; then
-    animate "🐍 Python requirements installed!\n \n"
+    animate "\n\n🐍 Python requirements installed!\n  \n"
     sleep 1
 else
     animate "🐍 Python requirements failed to install. Please try again.\n"
@@ -96,7 +96,7 @@ if [[ $user_bashrc == *"### 🐝BEE HEADER END ###"* ]]; then
     animate "Looks like Bee was previously installed!\n"
     sleep 1
     animate "I'll clean up the old version first...\n\n"
-    ./uninstall.sh > /dev/null
+    ./uninstall.sh -q
 fi
 
 bee_bashrc=$(cat ./bashrc.sh)
@@ -118,9 +118,16 @@ fi
 user_bashrc="${shebang}\n${bee_bashrc}\n${rest}"
 echo -e "$user_bashrc" > ~/.bashrc
 
+animate "I'm installed! But now I have to source ~/.bashrc to make sure I'm ready to go...\n"
+sleep 1
+animate "(If I crash on this step, it means you didn't run the installer correctly! Re-run with \`${BBLU}. ./install.sh${BYLW}\` -- dot space dot slash install dot sh!) \n"
+sleep 1
+
 source ~/.bashrc
 
-animate "${BYLW} 🐝 _______  _______  _______  _______  _______  _______  _______  _______  _______  _______ _______  _______  _______  _______  _______  _______  _______  _______  _______  _______\n"
+animate "${BYLW}(😞 If you don't want to see my welcome message every time you open a new terminal -- I understand! -- just edit ${BBLU}~/.bashrc ${BYLW}to remove it. 😞)\n \n"
+
+animate "${BYLW}🐝 _______  _______  _______  _______  _______  _______  _______  _______  _______  _______ _______  _______  _______  _______  _______  _______  _______  _______  _______  _______\n"
 sleep 1
 
 animate "\nBee 🐝 installation complete!\n\n"
@@ -149,7 +156,7 @@ sleep 1
 
 animate "👉 If you want to use GPT-4, just type b4 instead of b! \n"
 sleep 1
-animate "    🐝   $ ${BBLU}b4 \"Help me with this horrible C++ error message :(\"${BYLW}\n"
+animate "    🐝   $ ${BBLU}b4 \"HELP ME! What is this gnarly C++ error message? :(\"${BYLW}\n"
 sleep 1
 animate "        Then I'll be even smarter! (Requires GPT-4 API Access) \n"
 sleep 1
@@ -169,7 +176,7 @@ animate "    - any file you pass me by typing '${BBLU}b file.name${BYLW}'\n"
 sleep 1
 animate "    (OpenAI sees this too 🤔)\n"
 sleep 1
-animate "   But all this information really helps me out! 😃\n"
+animate "   But all this information really helps me out! 😃\n \n"
 sleep 1
 
 animate "👉 More ways to use me: \n"
@@ -184,7 +191,7 @@ animate "       (Stuck in vim? Ask me how to configure your \$EDITOR) \n"
 sleep 1
 animate "   - '${BBLU}bemoji finger pointing right${BYLW}'\n"
 sleep 1
-animate "       I can help you search for an emoji!\n"
+animate "       I can help you search for an emoji!🌼🌸💐🏵️\n"
 sleep 1
 animate "   - '${BBLU}ps aux --sort=%mem | b \"What's using all my memory?\"${BYLW}'\n"
 sleep 1
