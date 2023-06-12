@@ -1,8 +1,9 @@
 name = "🐝Bee"
 magic = True
 curtain = False
-model = "gpt-3.5-turbo"
-test_response = "Test response: `tail b` okay? `ls -la` `mkdir -p test` and `touch hello` then `echo 'hi'` `pip install rich` `rm hello` `rmdir test`"
+model = "gpt-4"
+shell_lines = 20
+test_response = "Test response: `tail b` okay? `ls -la` `mkdir test` `rmdir test` and `touch hello` then `rm hello` `echo 'hi'` `pip install rich`"
 
 styles = {
     'instructions': 'gray30',
@@ -13,6 +14,7 @@ styles = {
     'language': 'gray30',
     'focused': 'black on blue',
     'error': 'bold red',
+    'shell': 'white',
     'shell-command': 'blue',
     'shell-output': 'white',
     # https://rich.readthedocs.io/en/stable/style.html

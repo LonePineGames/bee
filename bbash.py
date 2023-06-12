@@ -14,7 +14,7 @@ async def bash_client(exit_event, bash_queue, live):
             if not line:
                 break
 
-            live.console.print(Text(line.decode(), style=bui.style('shell-output')), end="")
+            bui.append_to_shell_segment(line.decode())
 
     def append_bash_queue(action):
         bash_queue.put_nowait(action['argument'])
@@ -30,7 +30,8 @@ async def bash_client(exit_event, bash_queue, live):
     async def run_bash_queue():
         while not exit_event.is_set():
             command = await bash_queue.get()  # Use await bash_queue.get() to retrieve items
-            command = command + '\n'
+            command = command.strip() + ' && echo "💻 ✅" || echo "💻 ❌"\n'
+            #print(command)
             shell.stdin.write(command.encode())
             await shell.stdin.drain()
 
@@ -108,8 +109,7 @@ def execute():
 
     selected_section = bui.get_selection()
 
-    bui.live.console.print(Text("$ " + selected_section + "", style=bui.style('shell-command')))
-    bui.live.refresh()
+    bui.append_to_shell_segment("\n💻 $ " + selected_section + "\n")
 
     if current_bash_client is None:
         bash_queue = asyncio.Queue()
