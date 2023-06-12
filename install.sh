@@ -111,7 +111,7 @@ sleep 1
 animate "    🐝   $ ${BBLU}b \"Show me how to spawn a new thread in {favorite language}.\"  ${BYLW}"
 sleep 1
 
-animate "\n\n👉 I'll give you answers -- plus code you can copy or run immediately. Press X to execute and Y to copy. Use WASD to navigate. \n"
+animate "\n\n👉 I'll give you answers -- plus code you can copy or run immediately. Press X to execute and C to copy. Use WASD to navigate. \n"
 sleep 1
 animate "👉 Press Q to quit -- then type 'b' with no arguments to see my last reply again.\n\n"
 sleep 1

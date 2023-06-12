@@ -1,6 +1,6 @@
 name = "🐝Bee"
 magic = True
-curtain = True
+curtain = False
 model = "gpt-3.5-turbo"
 #model = "gpt-4"
 shell_lines = 20
@@ -34,19 +34,25 @@ import byank
 import bgit
 import bfile
 
-instructions = 'a - prev, d - next, w - up, s - down, y - copy, x - execute, q - quit'
+instructions = 'a - prev, d - next, w - up, s - down, c - copy, x - execute, q - quit'
 keymap = {
     'x': bbash.execute,
-    'y': byank.copy,
+    'c': byank.copy,
     'w': bui.up,
     's': bui.down,
     'a': bui.left,
     'd': bui.right,
+    'q': bui.quit,
+
+    # Alternative keymaps (vim/dvorak/etc.)
     ',': bui.up,
     'o': bui.down,
     'e': bui.right,
     '\t': bui.right,
-    'q': bui.quit,
+    'j': bui.left,
+    'k': bui.right,
+    'y': byank.copy,
+    '\n': byank.copy,
 };
 
 info_sources = [
