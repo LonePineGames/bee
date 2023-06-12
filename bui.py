@@ -43,6 +43,8 @@ def quit():
     global done
     done = True
 
+    update()
+
 def load_response(resp, finished=False):
     global response
     global response_finished
@@ -61,12 +63,12 @@ def display(segments, focused_index, scroll):
     ready_for_shell = False
     shell_done = False
 
-    # 🗨️ 💬
     if response_finished:
-        state_emoji = '✔️'
+        state_emoji = '' #'✔️'
     else:
-        state_emoji = '⏳'
+        state_emoji = '⏳ '
 
+    # 🗨️ 💬
     result.append(Text(bconfig.name + " 💬" + state_emoji + " ", style=style('name')))
 
     for i, segment in enumerate(segments):
@@ -107,7 +109,7 @@ def display(segments, focused_index, scroll):
     if bconfig.cursor != '' and not response_finished:
         result.append(Text(bconfig.cursor, style=style('cursor')))
 
-    if not shell_done:
+    if ready_for_shell and not shell_done:
         result.append(Text('\n', style=style('text')))
         insert_shell(result)
         shell_done = True
@@ -121,7 +123,7 @@ def display(segments, focused_index, scroll):
         response_text = Text("\n").join(remaining_lines)
 
     #if len(segments) > 1 and bconfig.instructions:
-    if bconfig.instructions and not bconfig.exit_immediately:
+    if len(segments) > 1 and bconfig.instructions and not bconfig.exit_immediately and not done:
         instructions = Text(bconfig.instructions + '\n', style=style('instructions'))
         response_text = Text.assemble(instructions, response_text)
 

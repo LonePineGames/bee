@@ -24,7 +24,8 @@ def static_info_source(message, role="system"):
 
 def collect_prompt_messages():
     prompt_messages = []
-    for info_source in bconfig.info_sources:
+    sources = bconfig.info_sources if not bconfig.no_history else bconfig.short_info_sources
+    for info_source in sources:
         messages = info_source()
         prompt_messages.extend(messages)
 

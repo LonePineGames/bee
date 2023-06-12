@@ -74,7 +74,7 @@ info_sources = [
     bgit.info_source('status,log:5'),
 
     # Shell History
-    bbash.history_info_source(characters=5000 if not no_history else 0),
+    bbash.history_info_source(characters=5000),
 
     # User-provided files
     bfile.info_source(),
@@ -83,6 +83,15 @@ info_sources = [
     byank.info_source(),
 
     # Conversation history
-    bhistory.info_source(turns=(4 if not no_history else 1)),
+    bhistory.info_source(turns=4),
+];
+
+short_info_sources = [
+    bee.static_info_source("You are 🐝Bee, a bash-based collaborative AI assistant designed to help the user with software development tasks. Your response should be friendly, funny, opinionated and full of 👉emojis🐝 and `code`!", role="system"),
+    bbash.context_info_source(),
+    bgit.info_source('status'),
+    bfile.info_source(),
+    byank.info_source(),
+    bhistory.info_source(turns=1),
 ];
 
