@@ -15,6 +15,7 @@ def parse_args():
     parser.add_argument('-t', '--test', action='store_true', help='Test output')
     parser.add_argument('-c', '--clear', action='store_true', help='No conversation history')
     parser.add_argument('-H', '--history', action='store', type=int, help='Show conversation history')
+    parser.add_argument('--blocks', action='store_true', help='Only show code blocks')
 
     args, unknown = parser.parse_known_args()
 
@@ -73,6 +74,9 @@ def parse_args():
 
     if args.clear:
         bconfig.no_history = True
+
+    if args.blocks:
+        bconfig.only_blocks = True
 
     return ' '.join(unknown)
 

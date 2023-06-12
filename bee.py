@@ -71,20 +71,24 @@ def call_openai_api(prompt_messages):
     except Exception as e:
         return str(e)
 
-def get_bee_response(message):
+async def get_bee_response(message):
     response = ''
 
     if message == "":
         response = bhistory.get_prev_response()
 
+        if bconfig.animate_previous_response and bui.live is not None:
+            bui.print('Loading previous response...')
+            for i in range(0, len(response), 50):
+                bui.load_response(response[:i], finished=False)
+                bui.update()
+                await asyncio.sleep(0.1)
+
     else:
         prompt_messages = collect_prompt_messages()
 
         if not bconfig.curtain:
-            if bui.live is not None:
-                bui.live.console.print(prompt_messages)
-            else:
-                print(prompt_messages)
+            bui.print(prompt_messages)
 
         if bconfig.magic:
             try:
@@ -92,10 +96,7 @@ def get_bee_response(message):
                 openai.api_key = OPENAI_API_KEY
             except ImportError:
                 msg = "Please run ./install.sh to configure your OpenAI API key."
-                if bui.live is not None:
-                    bui.live.console.print(msg, style=bui.style('error'))
-                else:
-                    print(msg)
+                bui.print(msg, style=bui.style("error"))
                 exit(1)
 
             response = call_openai_api(prompt_messages)
@@ -108,7 +109,7 @@ def get_bee_response(message):
     return response
 
 async def get_bee_response_and_handle(message):
-    response = get_bee_response(message)
+    response = await get_bee_response(message)
 
     bui.load_response(response, finished=True)
     bui.update()
@@ -128,7 +129,7 @@ def parse_args_and_input():
 
         if stdin_message != "":
             if bui.live is not None:
-                bui.live.console.print(stdin_message)
+                bui.print(stdin_message)
             message = message + '\n' + stdin_message
             message = message.strip()
 
@@ -145,7 +146,7 @@ async def main():
     get_bee_response_task = asyncio.create_task(get_bee_response_and_handle(message))
 
     def signal_handler(sig, frame):
-        bui.live.console.print("Exiting gracefully...")
+        bui.print("Exiting gracefully...")
         get_bee_response_task.cancel()
         bbash.cancel()
         bhistory.close()
@@ -165,7 +166,7 @@ async def main():
         if action is not None:
             action()
         else:
-            bui.live.console.print("Unrecognized key: " + key, style=bui.style('error'))
+            bui.print("Unrecognized key: " + key, style=bui.style('error'))
 
         bui.update()
 
@@ -176,9 +177,9 @@ async def main():
     bhistory.close()
 
 
-def noninteractive_main():
+async def noninteractive_main():
     def signal_handler(sig, frame):
-        print("Exiting gracefully...")
+        bui.print("Exiting gracefully...")
         bhistory.close()
         sys.exit(0)
 
@@ -193,16 +194,36 @@ def noninteractive_main():
             message = message.strip()
 
     bhistory.save_response(message, "user")
-    response = get_bee_response(message)
+    response = await get_bee_response(message)
+
+    if bconfig.only_blocks:
+        segments = bui.parse_chatgpt_output(response)
+        code_sections = [segment for segment in segments if segment["mode"] == "block"]
+
+        # If there are no code sections, then just return the whole response
+        if len(code_sections) > 0:
+            response = "\n".join([section["text"] for section in code_sections])
 
     # Echo to stdout
     print(response)
 
     bhistory.close()
 
+import asyncio
+
+def my_exception_handler(loop, context):
+    # Print the exception message and the stack trace.
+    bui.print("Caught an exception: ", context["message"])
+    bui.print("Stack trace: ")
+    for line in context["traceback"]:
+        bui.print(line)
+
+loop = asyncio.get_event_loop()
+loop.set_exception_handler(my_exception_handler)
+
 if __name__ == "__main__":
     if not os.isatty(sys.stdout.fileno()):
-        noninteractive_main()
+        asyncio.run(noninteractive_main())
     else:
         asyncio.run(main())
 

@@ -67,16 +67,25 @@ def display(segments, focused_index, scroll):
     result.append(Text(state_emoji + bconfig.name + ": ", style=style('name')))
 
     for i, segment in enumerate(segments):
-        seg_style = style(segment["mode"])
+        mode = segment["mode"]
+        if bconfig.only_blocks and mode != "block":
+            if segment["mode"] == "code" and len(segment["text"]) > 5:
+                mode = "block"
+                segment["text"] = segment["text"].strip() + '\n'
+            else:
+                continue
+
+        seg_style = style(mode)
         if i == focused_index:
             seg_style = style("focused")
             ready_for_shell = not shell_done
 
-        if segment["mode"] == "block":
-            if segment["language"]:
+        if mode == "block":
+            if segment.get("language", None) is not None:
                 result.append(Text(segment["language"]+'\n', style=style('language')))
             text = segment["text"]
-            text = text.strip("\n")
+            if not bconfig.only_blocks:
+                text = text.strip("\n")
             result.append(Text(text, style=seg_style))
 
             if ready_for_shell:
@@ -85,7 +94,7 @@ def display(segments, focused_index, scroll):
                 ready_for_shell = False
         else:
             text = segment["text"]
-            if ready_for_shell and segment["mode"] == "text" and '\n' in text:
+            if ready_for_shell and mode == "text" and '\n' in text:
                 text = text.split('\n', 1)
                 result.append(Text(text[0]+'\n', style=seg_style))
                 insert_shell(result)
@@ -171,7 +180,7 @@ def update():
         response = response[len(bconfig.name + ":"):]
 
     segments = parse_chatgpt_output(response)
-    code_sections = [segment for segment in segments if segment["mode"] in ["code", "block"]]
+    code_sections = [segment for segment in segments if segment["mode"] in ["code", "block"] and len(segment["text"]) > 5]
     code_ndx = code_sections[focused_index]["ndx"] if len(code_sections) > 0 else -1
 
     response_text = display(segments, code_ndx, scroll)
@@ -216,4 +225,11 @@ def append_to_shell_segment(msg):
     update()
     #live.console.print(Text(msg, style=style('shell')), end="")
     #live.refresh()
+
+def print(args, style=''):
+    global live
+    if live is not None:
+        live.console.print(args, style=style)
+    else:
+        print(args)
 

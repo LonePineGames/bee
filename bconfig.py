@@ -1,13 +1,15 @@
 name = "🐝Bee"
 your_name = "User"
-cursor = '' # it's glitchy, so disabled for now
-#cursor = "🐝"
+#cursor = ''
+cursor = "_ 🐝" # it's glitchy, so disabled for now
 magic = True
 curtain = True
 model = "gpt-3.5-turbo"
 #model = "gpt-4"
 shell_lines = 20
 no_history = False
+only_blocks = False
+animate_previous_response = False
 test_response = "Test response: `tail b` okay? `ls -la` `mkdir test` `rmdir test` and `touch hello` then `rm hello` `echo 'hi'` `pip install rich`"
 
 styles = {
