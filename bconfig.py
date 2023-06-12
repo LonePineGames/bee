@@ -1,7 +1,7 @@
 name = "🐝Bee"
 your_name = "User"
 magic = True
-curtain = False
+curtain = True
 model = "gpt-3.5-turbo"
 #model = "gpt-4"
 shell_lines = 20

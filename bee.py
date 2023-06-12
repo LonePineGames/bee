@@ -7,7 +7,7 @@ import signal
 import sys
 import time
 
-from kbd2 import getkey
+import kbd2
 import bconfig
 import bui
 #import bhistory_file as bhistory
@@ -29,6 +29,12 @@ def collect_prompt_messages():
     for info_source in bconfig.info_sources:
         messages = info_source()
         prompt_messages.extend(messages)
+
+    # Filter for length
+    prompt_messages = [{
+        "role": message["role"],
+        "content": message["content"][:1000]
+    } for message in prompt_messages]
 
     return prompt_messages
 
@@ -76,9 +82,11 @@ def get_bee_response(message):
     else:
         prompt_messages = collect_prompt_messages()
 
-        print(prompt_messages)
-        if not bconfig.curtain and bui.live is not None:
-            bui.live.console.print(prompt_messages)
+        if not bconfig.curtain:
+            if bui.live is not None:
+                bui.live.console.print(prompt_messages)
+            else:
+                print(prompt_messages)
 
         if bconfig.magic:
             response = call_openai_api(prompt_messages)
@@ -97,6 +105,9 @@ async def get_bee_response_and_handle(message):
     bui.update()
 
     bui.done = bui.num_code_sections() == 0
+
+    if bui.done:
+        kbd2.cancel = True
 
 def parse_args_and_input():
     message = bargs.parse_args()
@@ -136,7 +147,10 @@ async def main():
     while not bui.done:
         #await asyncio.sleep(0.1)
 
-        key = await getkey()
+        key = await kbd2.getkey()
+
+        if key is None:
+            continue
 
         action = bconfig.keymap.get(key, None)
         if action is not None:

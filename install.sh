@@ -139,6 +139,25 @@ sleep 1
 animate "   All this information really helps me out! 😃\n"
 sleep 1
 
+animate "👉 More ways to use me: \n"
+sleep 1
+animate "   - '${BBLU}b${BYLW}' to see my last reply\n"
+sleep 1
+animate "   - '${BBLU}bee${BYLW}' to use your \$EDITOR to ask your question.\n"
+sleep 1
+animate "       Then bash won't get in the way!\n"
+sleep 1
+animate "       (Stuck in vim? Ask me how to configure your \$EDITOR) \n"
+sleep 1
+animate "   - '${BBLU}ps aux --sort=%mem | b \"What's using all my memory?\"${BYLW}'\n"
+sleep 1
+animate "       Pipe any command to me to get a quick explanation.\n"
+sleep 1
+animate "   - '${BBLU}./configure || b4 \"What do I need to install? Use sudo.\" | grep \"sudo apt\"${BYLW}'\n"
+sleep 1
+animate "       Use b in your automation scripts!\n"
+sleep 1
+
 animate "👉 If you want to configure me, open up this file: ${BBLU}bconfig.py${BYLW}.\n"
 sleep 1
 animate "    You can change colors, change the keymap, even write your own plugins! \n\n"

@@ -1,31 +1,27 @@
-import sys
-import select
-import tty
-import termios
-
-import sys
-import select
-import tty
-import termios
 import asyncio
-
+import select
 import sys
-import os
-import tty
 import termios
+import tty
+
+cancel = False
 
 def isData():
     return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
 
 async def getkey():
+    global cancel
+
     old_settings = termios.tcgetattr(sys.stdin)
     try:
         tty.setcbreak(sys.stdin.fileno())
-        while True:
+        while not cancel:
             if isData():
                 c = sys.stdin.read(1)
                 return c
             await asyncio.sleep(0.1)
+
+        return None
 
     finally:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)

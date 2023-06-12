@@ -19,6 +19,7 @@ def parse_args():
     args, unknown = parser.parse_known_args()
 
     if args.version:
+        bui.setup_live('')
         bui.live.console.print(Text.assemble(("🐝 Bee ", bui.style("name")), ("version 0.1", bui.style("code"))))
         bui.live.update('')
         bui.live.refresh()
