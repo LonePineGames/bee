@@ -149,6 +149,10 @@ animate "       Then bash won't get in the way!\n"
 sleep 1
 animate "       (Stuck in vim? Ask me how to configure your \$EDITOR) \n"
 sleep 1
+animate "   - '${BBLU}bemoji finger pointing right${BYLW}'\n"
+sleep 1
+animate "       I can help you search for an emoji!\n"
+sleep 1
 animate "   - '${BBLU}ps aux --sort=%mem | b \"What's using all my memory?\"${BYLW}'\n"
 sleep 1
 animate "       Pipe any command to me to get a quick explanation.\n"

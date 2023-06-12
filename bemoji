@@ -1,0 +1,4 @@
+#!/bin/bash
+
+b "I'm trying to find an emoji. Please give me some emojis matching this search: \"" $@ "\". Please use the following format: \`🌼\`   \`🌸\`   \`💐\`   \`🌷\`   \`🌹\`   \`🏵️\`."
+
