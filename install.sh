@@ -167,7 +167,9 @@ animate "    - system clipboard contents\n"
 sleep 1
 animate "    - any file you pass me by typing '${BBLU}b file.name${BYLW}'\n"
 sleep 1
-animate "   All this information really helps me out! 😃\n"
+animate "    (OpenAI sees this too 🤔)\n"
+sleep 1
+animate "   But all this information really helps me out! 😃\n"
 sleep 1
 
 animate "👉 More ways to use me: \n"

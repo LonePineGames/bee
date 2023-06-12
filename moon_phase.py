@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import datetime
 import pytz
 
@@ -17,21 +19,21 @@ def conway_moon_phase(year, month, day):
 
 def get_moon_phase_string(moon_phase):
     if moon_phase == 0:
-        return "New moon"
+        return "new moon"
     elif moon_phase < 8:
-        return "Waxing crescent"
+        return "waxing crescent"
     elif moon_phase == 8:
-        return "First quarter"
+        return "first quarter"
     elif moon_phase < 15:
-        return "Waxing gibbous"
+        return "waxing gibbous"
     elif moon_phase == 15:
-        return "Full moon"
+        return "full moon"
     elif moon_phase < 22:
-        return "Waning gibbous"
+        return "waning gibbous"
     elif moon_phase == 22:
-        return "Last quarter"
+        return "last quarter"
     else:
-        return "Waning crescent"
+        return "waning crescent"
 
 def main():
     today = datetime.datetime.now(pytz.timezone("US/Pacific"))
