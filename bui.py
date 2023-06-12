@@ -18,6 +18,7 @@ segments = []
 code_sections = []
 shell_output = []
 done = False
+response_finished = False
 
 def style(style_name):
     return bconfig.styles.get(style_name, None)
@@ -30,10 +31,12 @@ def quit():
     global done
     done = True
 
-def load_response(resp):
+def load_response(resp, finished=False):
     global response
+    global response_finished
 
     response = resp
+    response_finished = finished
 
 def insert_shell(result):
     shell_text = ''.join(shell_output)
@@ -90,7 +93,7 @@ def display(segments, focused_index, scroll):
         remaining_lines = lines[scroll:]
         response_text = Text("\n").join(remaining_lines)
 
-    if len(segments) > 1 and bconfig.instructions:
+    if len(segments) > 1 and bconfig.instructions and response_finished:
         instructions = Text(bconfig.instructions + '\n', style=style('instructions'))
         response_text = Text.assemble(instructions, response_text)
 

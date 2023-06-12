@@ -52,8 +52,11 @@ def call_openai_api(prompt_messages):
             chunk_time = time.time() - start_time  # calculate the time delay of the chunk
             chunk_message = chunk['choices'][0]['delta']  # extract the message
             message = message + chunk_message.get('content', '')
-            bui.live.update(Text.assemble((bconfig.name + ': ', bui.style('name')), (message, bui.style('text'))))
-            bui.live.refresh()
+            bui.load_response(message, finished=False)
+            bui.update()
+
+            #bui.live.update(Text.assemble((bconfig.name + ': ', bui.style('name')), (message, bui.style('text'))))
+            #bui.live.refresh()
 
         # print the time delay and text received
         #print(f"Full response received {chunk_time:.2f} seconds after request")
@@ -90,7 +93,7 @@ async def main():
     # Clean up the response
     response = response.strip() + "\n"
 
-    bui.load_response(response)
+    bui.load_response(response, finished=True)
     bui.update()
     bhistory.save_response(response, "assistant")
 
