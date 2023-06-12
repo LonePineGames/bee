@@ -57,6 +57,37 @@ else
     sleep 1
 fi
 
+animate "${BYLW}Let's make sure that you have the python requirements installed."
+sleep 1
+
+# Check to see if python3 is installed
+if ! command -v python3 &> /dev/null
+then
+    animate "🐍 Python3 is not installed. Please install it, then run this script again.\n"
+    sleep 1
+    exit
+fi
+
+# Check to see if python3 is installed
+if ! command -v pip3 &> /dev/null
+then
+    animate "🐍 pip3 is not installed. Please install it, then run this script again.\n"
+    sleep 1
+    exit
+fi
+
+# Install the python requirements
+pip3 install -r requirements.txt
+
+if [ $? -eq 0 ]; then
+    animate "🐍 Python requirements installed!\n \n"
+    sleep 1
+else
+    animate "🐍 Python requirements failed to install. Please try again.\n"
+    sleep 1
+    exit
+fi
+
 # Read ~/.bashrc into a variable
 user_bashrc=$(cat ~/.bashrc)
 

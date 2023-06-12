@@ -1,0 +1,7 @@
+argparse
+asyncio
+gitpython
+pathlib
+pyperclip
+rich
+

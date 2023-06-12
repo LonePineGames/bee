@@ -11,3 +11,44 @@ It works pretty well, but I'm not sure where to go next. Some things I'm thinkin
 * some sort of search algo / classical AI algo that can filter all the possible input to Bee for the most relevant things. I can feed Bee information from different sources including conversation history, shell history/typescript, the content of files, etc. How can I most intelligently decide which information to put in the context window, to make most economic use of tokens?
 
 I want to work towards a system where I can write `./bash_script.sh | b "Handle this script output" > bee_output.txt. It would be nice to retain as much interactivity (or as little as the user chooses) to maintain the nice Bee interface. I think I want to use stdin and stdout, probably I want to detect when b is being called as part of a script, and then disable rich.live and just use stdout? Disable keyboard handling?
+
+
+import sqlite3
+import os
+import sys
+from datetime import datetime
+from pathlib import Path
+
+import asyncio
+from rich.text import Text
+import os
+import signal
+import sys
+import time
+
+import argparse
+from rich.text import Text
+
+from git import Repo
+import os
+
+import os
+import sys
+
+import asyncio
+import select
+import sys
+import termios
+import tty
+
+import pyperclip
+
+import asyncio
+import os
+from pathlib import Path
+import re
+from rich.text import Text
+import subprocess
+
+
+
