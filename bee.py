@@ -67,17 +67,17 @@ def call_openai_api(prompt_messages):
     except Exception as e:
         return str(e)
 
-async def get_bee_response(message):
+def get_bee_response(message):
     response = ''
 
     if message == "":
         response = bhistory.get_prev_response()
 
     else:
-        bhistory.save_response(message, "user")
         prompt_messages = collect_prompt_messages()
 
-        if not bconfig.curtain:
+        print(prompt_messages)
+        if not bconfig.curtain and bui.live is not None:
             bui.live.console.print(prompt_messages)
 
         if bconfig.magic:
@@ -88,16 +88,17 @@ async def get_bee_response(message):
             response = bconfig.test_response
             response = response.strip() + "\n"
 
+    return response
+
+async def get_bee_response_and_handle(message):
+    response = get_bee_response(message)
+
     bui.load_response(response, finished=True)
     bui.update()
 
     bui.done = bui.num_code_sections() == 0
 
-async def main():
-    thinking_text = Text(bconfig.name + ": Reading...", style=bui.style('thinking'))
-    bui.live.update(thinking_text)
-    bui.live.refresh()
-
+def parse_args_and_input():
     message = bargs.parse_args()
 
     if not os.isatty(sys.stdin.fileno()):
@@ -106,18 +107,25 @@ async def main():
         sys.stdin = open('/dev/tty')
 
         if stdin_message != "":
-            bui.live.console.print(stdin_message)
+            if bui.live is not None:
+                bui.live.console.print(stdin_message)
             message = message + '\n' + stdin_message
             message = message.strip()
 
-    thinking_text = Text(bconfig.name + ": Thinking...", style=bui.style('thinking'))
-    bui.live.update(thinking_text)
-    bui.live.refresh()
+    return message
 
-    get_bee_response_task = asyncio.create_task(get_bee_response(message))
+async def main():
+    bui.setup_live('Reading')
+    message = parse_args_and_input()
+
+    if message != "":
+        bhistory.save_response(message, "user")
+
+    bui.setup_live('Thinking')
+    get_bee_response_task = asyncio.create_task(get_bee_response_and_handle(message))
 
     def signal_handler(sig, frame):
-        print("Exiting gracefully...")
+        bui.live.console.print("Exiting gracefully...")
         get_bee_response_task.cancel()
         bbash.cancel()
         bhistory.close()
@@ -144,6 +152,34 @@ async def main():
     bbash.cancel()
     bhistory.close()
 
+
+def noninteractive_main():
+    def signal_handler(sig, frame):
+        print("Exiting gracefully...")
+        bhistory.close()
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+
+    message = bargs.parse_args()
+
+    if not os.isatty(sys.stdin.fileno()):
+        stdin_message = sys.stdin.read()
+        if stdin_message != "":
+            message = message + '\n' + stdin_message
+            message = message.strip()
+
+    bhistory.save_response(message, "user")
+    response = get_bee_response(message)
+
+    # Echo to stdout
+    print(response)
+
+    bhistory.close()
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    if not os.isatty(sys.stdout.fileno()):
+        noninteractive_main()
+    else:
+        asyncio.run(main())
 

@@ -19,13 +19,22 @@ code_sections = []
 shell_output = []
 done = False
 response_finished = False
+live = None
 
 def style(style_name):
     return bconfig.styles.get(style_name, None)
 
-thinking_text = Text(bconfig.name + ": Reading...", style=style('thinking'))
-live = Live(thinking_text, auto_refresh=False, screen=False)
-live.start()
+def setup_live(mode):
+    global live
+
+    thinking_text = Text(f"{bconfig.name}: {mode}...", style=style('thinking'))
+
+    if live is None:
+        live = Live(thinking_text, auto_refresh=False, screen=False)
+        live.start()
+    else:
+        live.update(thinking_text)
+        live.refresh()
 
 def quit():
     global done
@@ -143,6 +152,9 @@ def update():
     global code_sections
     global live
     global focused_index
+
+    if live is None:
+        return
 
     if response.startswith(bconfig.name + ":"):
         response = response[len(bconfig.name + ":"):]
