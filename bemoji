@@ -1,4 +1,3 @@
 #!/bin/bash
 
-b "I'm trying to find an emoji. Please give me some emojis matching this search: \"" $@ "\". Please use the following format: \`🌼\`   \`🌸\`   \`💐\`   \`🌷\`   \`🌹\`   \`🏵️\`."
-
+b "Please return emojis matching this query: \"" $@ "\". Please use the following format: \`🌼\` - \`🌸\` - \`💐\` - \`🌷\` - \`🌹\` - \`🏵️\`. (Include the backticks, they make it easier to copy.)"

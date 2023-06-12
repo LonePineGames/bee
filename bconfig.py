@@ -1,5 +1,7 @@
 name = "🐝Bee"
 your_name = "User"
+cursor = '' # it's glitchy, so disabled for now
+#cursor = "🐝"
 magic = True
 curtain = True
 model = "gpt-3.5-turbo"
@@ -20,6 +22,7 @@ styles = {
     'shell': 'white',
     'shell-command': 'blue',
     'shell-output': 'white',
+    'cursor': 'white',
     # https://rich.readthedocs.io/en/stable/style.html
     # https://rich.readthedocs.io/en/stable/appendix/colors.html#appendix-colors
 };

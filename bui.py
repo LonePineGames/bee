@@ -22,7 +22,10 @@ response_finished = False
 live = None
 
 def style(style_name):
-    return bconfig.styles.get(style_name, None)
+    result = bconfig.styles.get(style_name, None)
+    if result is None:
+        result = bconfig.styles.get('text', '')
+    return result
 
 def setup_live(mode):
     global live
@@ -58,7 +61,10 @@ def display(segments, focused_index, scroll):
     ready_for_shell = False
     shell_done = False
 
-    result.append(Text(bconfig.name + ": ", style=style('name')))
+    #state_emoji = '✅' if response_finished else '🗨️'
+    state_emoji = '' # it's glitchy, so disabled for now
+
+    result.append(Text(state_emoji + bconfig.name + ": ", style=style('name')))
 
     for i, segment in enumerate(segments):
         seg_style = style(segment["mode"])
@@ -90,9 +96,13 @@ def display(segments, focused_index, scroll):
             else:
                 result.append(Text(segment["text"], style=seg_style))
 
+    if bconfig.cursor != '' and not response_finished:
+        result.append(Text(bconfig.cursor, style=style('cursor')))
+
     if not shell_done:
         result.append(Text('\n', style=style('text')))
         insert_shell(result)
+        shell_done = True
 
     # Merge the segments together
     response_text = Text().join(result)
@@ -152,6 +162,7 @@ def update():
     global code_sections
     global live
     global focused_index
+    global scroll
 
     if live is None:
         return
