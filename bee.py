@@ -2,6 +2,8 @@
 
 import asyncio
 from rich.text import Text
+import os
+import signal
 import sys
 import time
 
@@ -93,13 +95,36 @@ async def get_bee_response(message):
     bui.done = bui.num_code_sections() == 0
 
 async def main():
-    thinking_text = Text(bconfig.name + ": Thinking...", style=bui.style('thinking'))
+    thinking_text = Text(bconfig.name + ": Reading...", style=bui.style('thinking'))
     bui.live.update(thinking_text)
     bui.live.refresh()
 
     message = bargs.parse_args()
-    #message = bhistory.get_user_message()
+
+    if not os.isatty(sys.stdin.fileno()):
+        stdin_message = sys.stdin.read()
+        # Reopen the terminal as stdin
+        sys.stdin = open('/dev/tty')
+
+        if stdin_message != "":
+            bui.live.console.print(stdin_message)
+            message = message + '\n' + stdin_message
+            message = message.strip()
+
+    thinking_text = Text(bconfig.name + ": Thinking...", style=bui.style('thinking'))
+    bui.live.update(thinking_text)
+    bui.live.refresh()
+
     get_bee_response_task = asyncio.create_task(get_bee_response(message))
+
+    def signal_handler(sig, frame):
+        print("Exiting gracefully...")
+        get_bee_response_task.cancel()
+        bbash.cancel()
+        bhistory.close()
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
 
     while not bui.done:
         await asyncio.sleep(0.1)

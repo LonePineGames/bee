@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Open the user's configured editor and save the input to a temporary file
+tempfile=$(mktemp)
+$EDITOR $tempfile
+
+# Pipe the contents of the temporary file to another shell script
+# Include my arguments
+cat $tempfile | b $@
+
+# Remove the temporary file
+rm $tempfile
+

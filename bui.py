@@ -23,7 +23,7 @@ response_finished = False
 def style(style_name):
     return bconfig.styles.get(style_name, None)
 
-thinking_text = Text(bconfig.name + ": Thinking...", style=style('thinking'))
+thinking_text = Text(bconfig.name + ": Reading...", style=style('thinking'))
 live = Live(thinking_text, auto_refresh=False, screen=False)
 live.start()
 
