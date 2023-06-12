@@ -93,7 +93,7 @@ def display(segments, focused_index, scroll):
         remaining_lines = lines[scroll:]
         response_text = Text("\n").join(remaining_lines)
 
-    if len(segments) > 1 and bconfig.instructions and response_finished:
+    if len(segments) > 1 and bconfig.instructions:
         instructions = Text(bconfig.instructions + '\n', style=style('instructions'))
         response_text = Text.assemble(instructions, response_text)
 

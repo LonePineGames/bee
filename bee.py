@@ -65,14 +65,7 @@ def call_openai_api(prompt_messages):
     except Exception as e:
         return str(e)
 
-async def main():
-    thinking_text = Text(bconfig.name + ": Thinking...", style=bui.style('thinking'))
-    bui.live.update(thinking_text)
-    bui.live.refresh()
-
-    message = bargs.parse_args()
-    #message = bhistory.get_user_message()
-
+async def get_bee_response(message):
     response = ''
 
     if message == "":
@@ -99,7 +92,18 @@ async def main():
 
     bui.done = bui.num_code_sections() == 0
 
+async def main():
+    thinking_text = Text(bconfig.name + ": Thinking...", style=bui.style('thinking'))
+    bui.live.update(thinking_text)
+    bui.live.refresh()
+
+    message = bargs.parse_args()
+    #message = bhistory.get_user_message()
+    get_bee_response_task = asyncio.create_task(get_bee_response(message))
+
     while not bui.done:
+        await asyncio.sleep(0.1)
+
         key = await getkey()
 
         action = bconfig.keymap.get(key, None)
@@ -111,6 +115,8 @@ async def main():
         bui.update()
 
     # TODO: find a modular way to close plugins
+    await asyncio.gather(get_bee_response_task)
+    get_bee_response_task.cancel()
     bbash.cancel()
     bhistory.close()
 
