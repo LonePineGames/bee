@@ -34,8 +34,10 @@ def save_response(response, role):
 # Retrieve the conversation history from the database
 def get_history(turns):
     c.execute("SELECT role, content, timestamp FROM history ORDER BY timestamp DESC LIMIT ?", (turns,))
-    return [{"role": role, "content": content, "timestamp": timestamp}
+    result = [{"role": role, "content": content, "timestamp": timestamp}
             for role, content, timestamp in c.fetchall()]
+    #print(result)
+    return result
 
 # Close the database connection when finished
 def close():

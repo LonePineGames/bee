@@ -1,4 +1,5 @@
 name = "🐝Bee"
+your_name = "User"
 magic = True
 curtain = False
 model = "gpt-3.5-turbo"

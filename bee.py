@@ -82,15 +82,14 @@ async def get_bee_response(message):
 
         if bconfig.magic:
             response = call_openai_api(prompt_messages)
+            response = response.strip() + "\n"
+            bhistory.save_response(response, "assistant")
         else:
             response = bconfig.test_response
-
-    # Clean up the response
-    response = response.strip() + "\n"
+            response = response.strip() + "\n"
 
     bui.load_response(response, finished=True)
     bui.update()
-    bhistory.save_response(response, "assistant")
 
     bui.done = bui.num_code_sections() == 0
 
@@ -127,7 +126,7 @@ async def main():
     signal.signal(signal.SIGINT, signal_handler)
 
     while not bui.done:
-        await asyncio.sleep(0.1)
+        #await asyncio.sleep(0.1)
 
         key = await getkey()
 

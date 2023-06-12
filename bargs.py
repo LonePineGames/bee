@@ -3,6 +3,7 @@ from rich.text import Text
 
 import bconfig
 import bui
+import bhistory
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -12,7 +13,8 @@ def parse_args():
     parser.add_argument('-3', '--gpt-3', action='store_true', help='Use GPT-3.5-Turbo')
     parser.add_argument('-v', '--version', action='store_true', help='Show version and exit')
     parser.add_argument('-t', '--test', action='store_true', help='Test output')
-    parser.add_argument('-c', '--clear', action='store_true', help='Clear conversation history')
+    parser.add_argument('-c', '--clear', action='store_true', help='No conversation history')
+    parser.add_argument('-H', '--history', action='store', type=int, help='Show conversation history')
 
     args, unknown = parser.parse_known_args()
 
@@ -24,6 +26,26 @@ def parse_args():
 
     if args.test:
         bconfig.magic = False
+        if len(unknown) == 0:
+            unknown.append("Hello, Bee!")
+
+    if args.history:
+        bconfig.magic = False
+        history = bhistory.get_history(args.history)
+        history.reverse()
+        result = ''
+        for message in history:
+            author = ''
+            if message['role'] == 'user':
+                author = bconfig.your_name
+            elif message['role'] == 'assistant':
+                author = bconfig.name
+            else:
+                continue
+            print(message)
+            result += f"{author}: {message['content']}\n\n"
+
+        bconfig.test_response = result
         if len(unknown) == 0:
             unknown.append("Hello, Bee!")
 

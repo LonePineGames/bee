@@ -11,6 +11,7 @@ fi
 
 export PATH="$PATH:-path-" # Bee
 alias b4="b -4" # Bee w/ GPT-4
+alias bhistory="b --history=20"
 
 ### 🐝BEE HEADER END ###
 
