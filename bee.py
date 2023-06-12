@@ -79,7 +79,7 @@ async def get_bee_response(message):
 
         if bconfig.animate_previous_response and bui.live is not None:
             bui.print('Loading previous response...')
-            for i in range(0, len(response), 50):
+            for i in range(0, len(response), 5):
                 bui.load_response(response[:i], finished=False)
                 bui.update()
                 await asyncio.sleep(0.1)
@@ -153,6 +153,9 @@ async def main():
         sys.exit(0)
 
     signal.signal(signal.SIGINT, signal_handler)
+
+    if bconfig.exit_immediately:
+        bui.done = True
 
     while not bui.done:
         #await asyncio.sleep(0.1)

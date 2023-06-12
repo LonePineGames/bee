@@ -2,6 +2,7 @@
 
 BYLW="\033[93m"
 BBLU="\033[34m"
+BWHT="\033[97m"
 
 #echo -e "${BYLW}Installing Bee 🐝"
 #echo -e "${BBLU}Installing Bee 🐝"
@@ -77,8 +78,12 @@ then
     exit
 fi
 
+echo -ne "${BWHT}"
+
 # Install the python requirements
 pip3 install -r requirements.txt
+
+echo -ne "${BYLW}"
 
 if [ $? -eq 0 ]; then
     animate "\n🐍 Python requirements installed! \n\n"
@@ -122,5 +127,6 @@ echo -e "$user_bashrc" > ~/.bashrc
 animate "I'm installed! But now I have to source ~/.bashrc to make sure I'm ready to go...\n"
 sleep 1
 
+echo -ne "${BWHT}"
 source ~/.bashrc
 

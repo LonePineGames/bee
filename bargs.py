@@ -16,6 +16,7 @@ def parse_args():
     parser.add_argument('-c', '--clear', action='store_true', help='No conversation history')
     parser.add_argument('-H', '--history', action='store', type=int, help='Show conversation history')
     parser.add_argument('--blocks', action='store_true', help='Only show code blocks')
+    parser.add_argument('--exit-immediately', action='store_true', help='Exit after getting the response')
 
     args, unknown = parser.parse_known_args()
 
@@ -77,6 +78,9 @@ def parse_args():
 
     if args.blocks:
         bconfig.only_blocks = True
+
+    if args.exit_immediately:
+        bconfig.exit_immediately = True
 
     return ' '.join(unknown)
 

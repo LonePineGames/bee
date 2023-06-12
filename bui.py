@@ -61,7 +61,8 @@ def display(segments, focused_index, scroll):
     ready_for_shell = False
     shell_done = False
 
-    state_emoji = '✔️' if response_finished else '🗨️'
+    #state_emoji = '✔️' if response_finished else '🗨️'
+    state_emoji = '' # its glitchy
 
     result.append(Text(state_emoji + bconfig.name + ": ", style=style('name')))
 
