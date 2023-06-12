@@ -30,7 +30,7 @@ def style(style_name):
 def setup_live(mode):
     global live
 
-    thinking_text = Text(f"{bconfig.name}: {mode}...", style=style('thinking'))
+    thinking_text = Text(f"💭{bconfig.name}: {mode}...", style=style('thinking'))
 
     if live is None:
         live = Live(thinking_text, auto_refresh=False, screen=False)
@@ -61,19 +61,14 @@ def display(segments, focused_index, scroll):
     ready_for_shell = False
     shell_done = False
 
-    #state_emoji = '✅' if response_finished else '🗨️'
-    state_emoji = '' # it's glitchy, so disabled for now
+    state_emoji = '✔️' if response_finished else '🗨️'
 
     result.append(Text(state_emoji + bconfig.name + ": ", style=style('name')))
 
     for i, segment in enumerate(segments):
         mode = segment["mode"]
-        if bconfig.only_blocks and mode != "block":
-            if segment["mode"] == "code" and len(segment["text"]) > 5:
-                mode = "block"
-                segment["text"] = segment["text"].strip() + '\n'
-            else:
-                continue
+        if bconfig.only_blocks and not is_code_segment(segment):
+            continue
 
         seg_style = style(mode)
         if i == focused_index:
@@ -121,7 +116,8 @@ def display(segments, focused_index, scroll):
         remaining_lines = lines[scroll:]
         response_text = Text("\n").join(remaining_lines)
 
-    if len(segments) > 1 and bconfig.instructions:
+    #if len(segments) > 1 and bconfig.instructions:
+    if bconfig.instructions:
         instructions = Text(bconfig.instructions + '\n', style=style('instructions'))
         response_text = Text.assemble(instructions, response_text)
 
@@ -165,6 +161,26 @@ def parse_chatgpt_output(output):
 
     return segments
 
+def has_nonascii_chars(str):
+    for char in str:
+        if ord(char) > 127:
+            return True
+    return False
+
+def is_code_segment(segment):
+    if segment["mode"] not in ["code", "block"]:
+        return False
+
+    if len(segment["text"]) < 5 and segment["mode"] == "code":
+        # Check to see if there is any emoji/unicode in the text
+        if not has_nonascii_chars(segment["text"]):
+            return False
+
+    return True
+
+def filter_code_sections(segments):
+    return [segment for segment in segments if is_code_segment(segment)]
+
 def update():
     global response
     global segments
@@ -180,7 +196,7 @@ def update():
         response = response[len(bconfig.name + ":"):]
 
     segments = parse_chatgpt_output(response)
-    code_sections = [segment for segment in segments if segment["mode"] in ["code", "block"] and len(segment["text"]) > 5]
+    code_sections = filter_code_sections(segments)
     code_ndx = code_sections[focused_index]["ndx"] if len(code_sections) > 0 else -1
 
     response_text = display(segments, code_ndx, scroll)

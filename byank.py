@@ -27,6 +27,9 @@ def copy():
     elif selection in selected_sections:
         return
 
-    selected_sections.append(selection)
+    else:
+        selected_sections.append(selection)
+
+    #bui.print('copied: ' + str(selected_sections))
     pyperclip.copy('\n\n'.join(selected_sections))
 

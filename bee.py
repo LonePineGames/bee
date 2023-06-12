@@ -114,7 +114,7 @@ async def get_bee_response_and_handle(message):
     bui.load_response(response, finished=True)
     bui.update()
 
-    bui.done = bui.num_code_sections() == 0
+    #bui.done = len(message) < 200 and bui.num_code_sections() == 0
 
     if bui.done:
         kbd2.cancel = True

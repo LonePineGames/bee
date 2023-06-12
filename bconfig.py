@@ -1,9 +1,9 @@
 name = "🐝Bee"
 your_name = "User"
-#cursor = ''
-cursor = "_ 🐝" # it's glitchy, so disabled for now
+cursor = "_ 🐝"
+#cursor = '' # if its glitchy, disable it
 magic = True
-curtain = True
+curtain = False
 model = "gpt-3.5-turbo"
 #model = "gpt-4"
 shell_lines = 20
