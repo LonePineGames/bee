@@ -47,8 +47,10 @@ Buzz buzz! Once you have me installed, just type 'b "<your question>"' in your t
    - 'bee' to use your $EDITOR to ask your question.
        Then bash won't get in the way!
        (Stuck in vim? Ask me how to configure your $EDITOR)
-   - 'bemoji finger pointing right'
+   - 'bemoji tree'
        I can help you search for an emoji!🌼🌸💐🏵️
+   - 'bwrite public/reset.css'
+       I can quickly prototype files for you!
    - 'ps aux --sort=%mem | b "What's using all my memory?"'
        Pipe any command to me to get a quick explanation.
    - './configure || b4 "What do I need to install? Use sudo." | grep "sudo apt"'

@@ -9,7 +9,7 @@ model = "gpt-3.5-turbo"
 shell_lines = 20
 no_history = False
 only_blocks = False
-animate_previous_response = True
+animate_previous_response = False
 exit_immediately = False
 test_response = "Test response: `tail b` okay? `ls -la` `mkdir test` `rmdir test` and `touch hello` then `rm hello` `echo 'hi'` `pip install rich`"
 

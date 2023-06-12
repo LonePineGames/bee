@@ -118,7 +118,7 @@ def display(segments, focused_index, scroll):
         response_text = Text("\n").join(remaining_lines)
 
     #if len(segments) > 1 and bconfig.instructions:
-    if bconfig.instructions:
+    if bconfig.instructions and not bconfig.exit_immediately:
         instructions = Text(bconfig.instructions + '\n', style=style('instructions'))
         response_text = Text.assemble(instructions, response_text)
 

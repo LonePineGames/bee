@@ -1,0 +1,22 @@
+#!/bin/bash
+
+BYLW="\033[93m"
+BWHT="\033[97m"
+
+#echo -e "${BYLW}Please wait..."
+
+filename=$1
+shift
+
+# Get the file extension
+ext="${filename##*.}"
+
+msg="Bee, what do you predict would be the contents of '$filename'? Please output your best guess for the contents of '$filename'. Please output the example file in a code block."
+
+b --exit-immediately $msg $@
+mkdir -p "$(dirname "${filename}")"
+b --blocks > $filename
+
+echo -e "\n${BYLW}Result:${BWHT}"
+cat $filename
+

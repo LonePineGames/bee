@@ -94,6 +94,10 @@ animate "   - '${BBLU}bemoji tree${BYLW}'\n"
 sleep 1
 animate "       I can help you search for an emoji!🌼🌸💐🏵️\n"
 sleep 1
+animate "   - '${BBLU}bwrite public/reset.css${BYLW}'\n"
+sleep 1
+animate "       I can quickly prototype files for you!\n"
+sleep 1
 animate "   - '${BBLU}ps aux --sort=%mem | b \"What's using all my memory?\"${BYLW}'\n"
 sleep 1
 animate "       Pipe any command to me to get a quick explanation.\n"
