@@ -30,7 +30,7 @@ def style(style_name):
 def setup_live(mode):
     global live
 
-    thinking_text = Text(f"💭{bconfig.name}: {mode}...", style=style('thinking'))
+    thinking_text = Text(f"{bconfig.name} 💭⏳ {mode}...", style=style('thinking'))
 
     if live is None:
         live = Live(thinking_text, auto_refresh=False, screen=False)
@@ -61,10 +61,13 @@ def display(segments, focused_index, scroll):
     ready_for_shell = False
     shell_done = False
 
-    #state_emoji = '✔️' if response_finished else '🗨️'
-    state_emoji = '' # its glitchy
+    # 🗨️ 💬
+    if response_finished:
+        state_emoji = '✔️'
+    else:
+        state_emoji = '⏳'
 
-    result.append(Text(state_emoji + bconfig.name + ": ", style=style('name')))
+    result.append(Text(bconfig.name + " 💬" + state_emoji + " ", style=style('name')))
 
     for i, segment in enumerate(segments):
         mode = segment["mode"]
