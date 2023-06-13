@@ -84,7 +84,7 @@ info_sources = [
     byank.info_source(),
 
     # Conversation history
-    bhistory.info_source(turns=4),
+    bhistory.info_source(turns=3),
 ];
 
 short_info_sources = [

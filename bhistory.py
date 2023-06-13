@@ -177,11 +177,8 @@ def get_message(role=None):
 
     return ''
 
-def set_message(role, message, finished=True):
+def set_message(role, message, finished=False):
     global current_turn
-    global response_finished
-
-    response_finished = finished
 
     if role == 'user':
         user_name = bbash.get_user_name()
@@ -194,22 +191,25 @@ def set_message(role, message, finished=True):
     elif role == 'system':
         c.execute('''UPDATE history SET system_messages = ? WHERE id = ?''', (message, current_turn))
 
-    if finished:
-        # Append the current turn to the history file
-        c.execute('''SELECT * FROM history WHERE id = ?''', (current_turn,))
-        result = c.fetchone()
+def finish_response():
+    global response_finished
+    response_finished = True
 
-        #id = result[0]
-        timestamp = result[1]
-        user_name = result[2]
-        user_message = result[3]
-        assistant_message = result[4]
-        #system_messages = result[5]
+    # Append the current turn to the history file
+    c.execute('''SELECT * FROM history WHERE id = ?''', (current_turn,))
+    result = c.fetchone()
 
-        message = f"{timestamp}\n{user_name}: {user_message}\n{bconfig.name}: {assistant_message}\n=====\n\n"
+    #id = result[0]
+    timestamp = result[1]
+    user_name = result[2]
+    user_message = result[3]
+    assistant_message = result[4]
+    #system_messages = result[5]
 
-        with open(history_file_path, 'a') as f:
-            f.write(message)
+    message = f"{timestamp}\n{user_name}: {user_message}\n\n{bconfig.name}: {assistant_message}\n=====\n\n"
+
+    with open(history_file_path, 'a') as f:
+        f.write(message)
 
 def set_system_messages(messages):
     # Encode the messages as a JSON string

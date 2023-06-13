@@ -37,13 +37,13 @@ def collect_prompt_messages():
 
     return prompt_messages
 
-def update_response(response, finished=False):
+def update_response(response):
     global interactive
 
     if response.startswith(bconfig.name):
         response = response[len(bconfig.name):]
 
-    bhistory.set_message('assistant', response, finished=finished)
+    bhistory.set_message('assistant', response)
 
     if interactive:
         bui.update()
@@ -58,9 +58,14 @@ async def get_bee_response(message):
 
     if bconfig.magic:
         bopenai.call_openai_api(prompt_messages, update_response)
+        bhistory.finish_response()
 
     else:
-        update_response(bconfig.test_response, finished=True)
+        update_response(bconfig.test_response)
+        bhistory.finish_response()
+
+    if interactive:
+        bui.update()
 
     if bui.done:
         kbd2.cancel = True
