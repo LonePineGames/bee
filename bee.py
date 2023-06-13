@@ -82,8 +82,8 @@ def parse_args_and_input():
             sys.stdin = open('/dev/tty')
 
         if stdin_message != "":
-            if interactive and bui.live is not None:
-                bui.print(stdin_message)
+            #if interactive and bui.live is not None:
+            #    bui.print(stdin_message)
             message = message + '\n' + stdin_message
             message = message.strip()
 

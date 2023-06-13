@@ -37,8 +37,7 @@ import bui
 # Plugins
 import bbash
 import bhistory
-#import bhistory_file as bhistory
-import byank
+import byank # clipboard
 import bgit
 import bfile
 

@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument('-v', '--version', action='store_true', help='Show version and exit')
     parser.add_argument('-t', '--test', action='store_true', help='Test output')
     parser.add_argument('-c', '--clear', action='store_true', help='No conversation history')
-    parser.add_argument('-H', '--history', action='store', type=int, help='Show conversation history')
+    parser.add_argument('-T', '--turn', action='store', type=int, help='Show conversation history')
     parser.add_argument('--blocks', action='store_true', help='Only show code blocks')
     parser.add_argument('--exit-immediately', action='store_true', help='Exit after getting the response')
     parser.add_argument('--show', choices=['user', 'system', 'assistant'], help='Show user or system message')
@@ -33,25 +33,9 @@ def parse_args():
         if len(unknown) == 0:
             unknown.append("Hello, Bee!")
 
-    if args.history:
-        bconfig.magic = False
-        history = bhistory.get_history(args.history)
-        history.reverse()
-        result = ''
-        for message in history:
-            author = ''
-            if message['role'] == 'user':
-                author = bconfig.your_name
-            elif message['role'] == 'assistant':
-                author = bconfig.name
-            else:
-                continue
-            print(message)
-            result += f"{author}: {message['content']}\n\n"
-
-        bconfig.test_response = result
-        if len(unknown) == 0:
-            unknown.append("Hello, Bee!")
+    if args.turn:
+        bhistory.set_turn(args.turn)
+        unknown = []
 
     if args.show:
         bhistory.set_message_role(args.show)

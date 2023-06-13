@@ -107,16 +107,24 @@ echo -ne "\n\n"
 animate "👉 More ways to use me:"
 sleep 1
 echo ""
-animate "    🐝 $ ${BBLU}b ${BYLW}   # to see my last reply"
+animate "    🐝 $ ${BBLU}b      ${BYLW}   # to see my last reply"
 sleep 1
 echo -ne "${BYLW}\n"
-animate "    🐝 $ ${BBLU}bee  ${BYLW}# to use your \$EDITOR to ask your question."
+
+animate "    🐝 $ ${BBLU}bee    ${BYLW}   # to use your \$EDITOR to ask your question."
 sleep 1
 echo ""
 animate "           Then bash won't get in the way!"
 sleep 1
 echo ""
 animate "           (Stuck in vim? Ask me how to configure your \$EDITOR)"
+sleep 1
+echo ""
+
+animate "    🐝 $ ${BBLU}brerun ${BYLW}   # edit and re-run your last command"
+sleep 1
+echo -ne "${BYLW}\n"
+animate "           (\`${BBLU}brerun -4${BYLW}\` to re-run with GPT-4)"
 sleep 1
 echo ""
 
@@ -152,13 +160,12 @@ echo ""
 animate "         b4 --blocks \"What do I need to install? Use sudo.\" > temp.sh;"
 echo ""
 animate "         b_or_not temp.sh \"Is this a valid script?\" && \\"
-sleep 2
+sleep 1
 echo ""
 animate "         ..."
 sleep 2
-echo -e "$BYLW"
+echo -ne "$BYLW\n\n"
 
-echo -ne "\n\n"
 animate "👉 If you want to configure me, open up this file: ${BBLU}bconfig.py${BYLW}.\n"
 sleep 1
 animate "    You can change colors, change the keymap, even write your own plugins! \n"
