@@ -10,6 +10,7 @@ import time
 
 import bee
 import bconfig
+import bhistory
 
 scroll = 0
 focused_index = 0
@@ -18,7 +19,6 @@ segments = []
 code_sections = []
 shell_output = []
 done = False
-response_finished = False
 live = None
 
 def style(style_name):
@@ -45,13 +45,6 @@ def quit():
 
     update()
 
-def load_response(resp, finished=False):
-    global response
-    global response_finished
-
-    response = resp
-    response_finished = finished
-
 def insert_shell(result):
     shell_text = ''.join(shell_output)
     shell_text = '\n'.join(shell_text.split('\n')[-bconfig.shell_lines:])
@@ -63,7 +56,7 @@ def display(segments, focused_index, scroll):
     ready_for_shell = False
     shell_done = False
 
-    if response_finished:
+    if bhistory.response_finished:
         state_emoji = '' #'✔️'
     else:
         state_emoji = '⏳ '
@@ -106,7 +99,7 @@ def display(segments, focused_index, scroll):
             else:
                 result.append(Text(segment["text"], style=seg_style))
 
-    if bconfig.cursor != '' and not response_finished:
+    if bconfig.cursor != '' and not bhistory.response_finished:
         result.append(Text(bconfig.cursor, style=style('cursor')))
 
     if ready_for_shell and not shell_done:
@@ -188,7 +181,6 @@ def filter_code_sections(segments):
     return [segment for segment in segments if is_code_segment(segment)]
 
 def update():
-    global response
     global segments
     global code_sections
     global live
@@ -198,8 +190,7 @@ def update():
     if live is None:
         return
 
-    if response.startswith(bconfig.name):
-        response = response[len(bconfig.name):]
+    response = bhistory.get_message()
 
     segments = parse_chatgpt_output(response)
     code_sections = filter_code_sections(segments)

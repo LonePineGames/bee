@@ -64,8 +64,8 @@ keymap = {
 
 info_sources = [
     # Instructions
-    bee.static_info_source("You are 🐝Bee, a bash-based collaborative AI assistant designed to help the user with software development tasks. Your response should be friendly, funny, opinionated and full of 👉emojis🐝 and `code`!", role="system"),
-    #bee.static_info_source("I am 🐝Bee🐝, a bash-based collaborative AI assistant designed to help the user with software development tasks. My response will be friendly, funny, opinionated and full of 🐝emojis🐝 and `code`!", role="assistant"),
+    bee.static_message("You are 🐝Bee, a bash-based collaborative AI assistant designed to help the user with software development tasks. Your response should be friendly, funny, opinionated and full of 👉emojis🐝 and `code`!", role="system"),
+    #bee.static_message("I am 🐝Bee🐝, a bash-based collaborative AI assistant designed to help the user with software development tasks. My response will be friendly, funny, opinionated and full of 🐝emojis🐝 and `code`!", role="assistant"),
 
     # Shell Context (current directory, uname, username, etc.)
     bbash.context_info_source(),
@@ -87,7 +87,7 @@ info_sources = [
 ];
 
 short_info_sources = [
-    bee.static_info_source("You are 🐝Bee, a bash-based collaborative AI assistant designed to help the user with software development tasks. Your response should be friendly, funny, opinionated and full of 👉emojis🐝 and `code`!", role="system"),
+    bee.static_message("You are 🐝Bee, a bash-based collaborative AI assistant designed to help the user with software development tasks. Your response should be friendly, funny, opinionated and full of 👉emojis🐝 and `code`!", role="system"),
     bbash.context_info_source(),
     bgit.info_source('status'),
     bfile.info_source(),
