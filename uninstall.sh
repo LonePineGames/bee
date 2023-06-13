@@ -40,6 +40,8 @@ else
   sleep 1
 fi
 
+rm -f .bee_tutorial_ran
+
 # delete apikey.py if it exists
 if [[ -f ./apikey.py ]]; then
   animate "\nWould you like to delete your API key? (y/n) "
