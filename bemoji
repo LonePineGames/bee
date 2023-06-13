@@ -1,3 +1,3 @@
 #!/bin/bash
 
-b -c "I'm looking for the \"$@\" emoji. Please output emojis in the following format: \`🌼\` - \`🏤\` - \`🐯\` - \`🌃\` - \`🌷\` - \`🕰️\` - \`✌️\` - \`💯\` (Include the backquotes, they make it easier to copy.) Please return the best available emojis matching my query: \"$@\"."
+b -c "I'm looking for the \"$@\" emoji. Please output emojis wrapped in backquotes, since that makes it easier for me to copy. Output emojis in the following format: \`🌼\` - \`🏤\` - \`🐯\` - \`🌃\` - \`🕰️\` - \`✌️\` - \`💯\`. Please return the best available emojis matching my query: \"$@\"."
