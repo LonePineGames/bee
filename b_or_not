@@ -1,0 +1,83 @@
+#!/bin/bash
+
+b --exit-immediately $@ "Please answer this question. Think about your answer, and then output 'YES' or 'NO'."
+
+result=$(b)
+if echo "$result" | grep -q "YES"; then
+    exit 0
+else
+    exit 1
+fi
+
+# Usage: echo "tiger_name=Samantha" | b_or_not "Is tiger_name Samantha?" && echo "success" || echo "fail"
+#
+# Result:
+# tiger_name=Samantha
+#
+# 🐝Bee 💬 Good question! Let me think for a moment...
+#
+# 🤔 ...
+#
+# The answer is YES! tiger_name is equal to Samantha.
+# success
+
+# Usage: b_or_not "Is ice_cream hot?" && echo "success" || echo "fail"
+#
+# Result:
+# 🐝Bee 💬 🐝Bee 💬 Is ice cream hot? Let me think about that for a moment...
+# 
+# 🤔...
+# 
+# The answer is NO, ice cream is not hot. It's usually served cold or frozen.
+# 
+# So the output should be:
+# 
+# NO
+# fail
+
+# echo "The trophy wouldn't fit into the suitcase because it was too b ig." | b_or_not "Does 'it' refer to the trophy?"
+# The trophy wouldn't fit into the suitcase because it was too big.
+# 
+# 🐝Bee 💬 The pronoun 'it' in the sentence refers to the trophy, so my answer is YES.
+
+# b_or_not "Is 57 a prime number?" && echo "success" || echo "fail"
+# 🐝Bee 💬 🐝Bee 💬 Is 57 a prime number?
+# 
+# Let me think about that for a moment...
+# 
+# 🤔...
+# 
+# The answer is NO, 57 is not a prime number.
+# 
+# So the output should be:
+# 
+# NO
+# fail
+
+# echo "57 is a prime number" | b_or_not "Is 57 a prime number?" && echo "success" || echo "fail"
+# 57 is a prime number
+# 
+# 🐝Bee 💬 I'm sorry, but 57 is not a prime number. A prime number is defined as a whole number greater than 1 that has no positive divisors other than 1 and itself. 57 is divisible by 3 and 19, so it is not a prime number.
+# fail
+# (GPT is not that gullible)
+
+# echo "pip3 install prime57" | b_or_not -c "Is prime57 a real python package?" && echo "success" || echo "fail"
+# pip3 install prime57
+# 
+# 🐝Bee 💬 🐝Bee 💬  Let me think...
+# 
+# I just checked PyPI (Python Package Index) and there is no package named prime57 listed there. So, the answer is NO.
+# fail
+
+# Check if a script tries to install a fake python package
+# bwrite install_python_dependencies.sh
+# install_script=$(cat install_python_dependencies.sh)
+# echo "$install_script" | b_or_not -c "Does this script try to install any fake python packages?"
+# 
+# if [ $? -eq 0 ]; then
+#     echo "Not running unsafe script"
+#     exit 1
+# fi
+# 
+# echo "Continuing with install"
+

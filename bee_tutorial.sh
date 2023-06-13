@@ -90,7 +90,7 @@ animate "       Then bash won't get in the way!\n"
 sleep 1
 animate "       (Stuck in vim? Ask me how to configure your \$EDITOR) \n"
 sleep 1
-animate "   - '${BBLU}bemoji tree${BYLW}' \n"
+animate "   - '${BBLU}bemoji hand pointing right${BYLW}' \n"
 sleep 1
 animate "       I can help you search for an emoji!🌼🌸💐🏵️\n"
 sleep 1

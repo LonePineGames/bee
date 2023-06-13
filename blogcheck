@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Path to the log file to monitor
+LOG_FILE=/var/log/messages
+
+# Email to send warning messages
+EMAIL=admin@example.com
+
+# Run indefinitely, checking the system health every 2 minutes.
+while true; do
+  # Read the last 20 lines of the log file
+  log=$(tail -n 20 $LOG_FILE)
+
+  # Check if the system is healthy
+  echo "$log" | b_or_not -c "Is the system healthy?"
+
+  # If the system is not healthy, send an email.
+  if [ $? -eq 0 ]; then
+    echo "The system is not healthy. Sending email to $EMAIL"
+    echo "Subject: System Health Warning" | sendmail $EMAIL
+  else
+    echo "The system is healthy"
+  fi
+
+  # Wait for 2 minutes before running again
+  sleep 120
+done
+

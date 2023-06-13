@@ -198,8 +198,8 @@ def update():
     if live is None:
         return
 
-    if response.startswith(bconfig.name + ":"):
-        response = response[len(bconfig.name + ":"):]
+    if response.startswith(bconfig.name):
+        response = response[len(bconfig.name):]
 
     segments = parse_chatgpt_output(response)
     code_sections = filter_code_sections(segments)
