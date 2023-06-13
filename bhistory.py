@@ -35,6 +35,9 @@ def setup():
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
+    c.execute('pragma busy_timeout=10000')
+    c.execute('pragma journal_mode=wal')
+
     # Create the history table if it doesn't exist
     c.execute('''CREATE TABLE IF NOT EXISTS history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
