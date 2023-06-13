@@ -51,7 +51,7 @@ def setup():
         set_message('assistant', 'Hi! I\'m Bee, your personal assistant.', finished=True)
 
     if current_turn < 0:
-        current_turn = max_turn() + current_turn
+        current_turn = max_turn() + current_turn + 1
 
 def cancel():
     conn.commit()
@@ -59,14 +59,14 @@ def cancel():
 
 def new_turn():
     global current_turn
-    c.execute('''INSERT INTO history (timestamp) VALUES (?)''', (datetime.now(),))
+    c.execute('''INSERT INTO history (timestamp, user_name, user_message, assistant_message, system_messages) VALUES (?, '', '', '', '')''', (datetime.now(),))
     current_turn = c.lastrowid
-    bui.print(current_turn)
+    #bui.print(current_turn)
 
 def set_turn(turn):
     global current_turn
     if turn < 0:
-        turn = max_turn() + turn
+        turn = max_turn() + turn + 1
 
     if turn > max_turn():
         turn = max_turn()

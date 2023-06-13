@@ -57,13 +57,7 @@ async def get_bee_response(message):
         bui.print(prompt_messages)
 
     if bconfig.magic:
-        message = ''
-        def openai_api_callback(chunk):
-            message += chunk
-            update_response(message)
-
-        bopenai.call_openai_api(prompt_messages, openai_api_callback)
-        update_response(message, finished=True)
+        bopenai.call_openai_api(prompt_messages, update_response)
 
     else:
         update_response(bconfig.test_response, finished=True)
@@ -136,6 +130,9 @@ async def main():
     message = parse_args_and_input()
     get_bee_response_task = None
 
+    if bconfig.exit_immediately or not interactive:
+        bui.done = True
+
     if message != "":
         bhistory.new_turn()
         bhistory.set_message('user', message)
@@ -147,9 +144,8 @@ async def main():
         cancelable.append(get_bee_response_task)
     else:
         bhistory.response_finished = True
-
-    if bconfig.exit_immediately or not interactive:
-        bui.done = True
+        if interactive:
+            bui.update()
 
     while not bui.done:
         key = await kbd2.getkey()

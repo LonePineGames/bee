@@ -4,9 +4,11 @@
 import time
 
 import bconfig
-#import bui
+import bui
 
 def call_openai_api(prompt_messages, callback):
+
+    message = ''
 
     try:
         import openai
@@ -26,19 +28,13 @@ def call_openai_api(prompt_messages, callback):
             messages=prompt_messages,
         )
 
-        #message = ''
-
         # iterate through the stream of events
         for chunk in response:
             chunk_time = time.time() - start_time  # calculate the time delay of the chunk
             chunk_message = chunk['choices'][0]['delta']  # extract the message
-            callback(chunk_message.get('content', ''))
-            #message = message + chunk_message.get('content', '')
-            #bui.load_response(message, finished=False)
-            #bui.update()
-
-            #bui.live.update(Text.assemble((bconfig.name + ': ', bui.style('name')), (message, bui.style('text'))))
-            #bui.live.refresh()
+            content = chunk_message.get('content', '')
+            message = message + content
+            callback(message)
 
         # print the time delay and text received
         #print(f"Full response received {chunk_time:.2f} seconds after request")
@@ -49,6 +45,10 @@ def call_openai_api(prompt_messages, callback):
         exit(1)
 
     except Exception as e:
-        return str(e)
+        result = []
+        if message != '':
+            result.append(message)
+        result.append(str(e))
+        callback('\n\n'.join(result))
 
 

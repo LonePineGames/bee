@@ -119,7 +119,7 @@ def display(segments, focused_index):
         response_text = Text("\n").join(remaining_lines)
 
     show_turn = bhistory.get_turn() < bhistory.max_turn() or bhistory.get_message_role() != 'assistant'
-    show_turn = True
+    #show_turn = True
     if show_turn:
         message_num = Text(f"{bhistory.get_message_role()} message #{bhistory.get_turn()} of {bhistory.max_turn()}\n", style=style('message_num'))
         response_text = Text.assemble(message_num, response_text)
@@ -200,6 +200,9 @@ def update():
 
     response = bhistory.get_message()
 
+    if response is None:
+        response = ""
+
     segments = parse_chatgpt_output(response)
     code_sections = filter_code_sections(segments)
     code_ndx = code_sections[focused_index]["ndx"] if len(code_sections) > 0 else -1
@@ -218,19 +221,23 @@ def left():
 
 def up():
     global scroll
+    global focused_index
     scroll = scroll - 1
 
     if scroll < 0:
-        bhistory.move_backward()
+        if bhistory.move_backward():
+            focused_index = 0
         scroll = 0
 
 def down():
     global scroll
+    global focused_index
     global num_visible_lines
 
     if num_visible_lines > 1:
         scroll = scroll + 1
     elif bhistory.move_forward():
+        focused_index = 0
         scroll = 0
 
 def num_code_sections():
