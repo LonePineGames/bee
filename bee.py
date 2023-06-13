@@ -137,6 +137,9 @@ def parse_args_and_input():
     return message
 
 async def main():
+    # Save the current cursor state
+    os.system("echo '\\033[?25p'")
+
     bui.setup_live('Reading')
     message = parse_args_and_input()
 
@@ -180,6 +183,8 @@ async def main():
     bbash.cancel()
     bhistory.close()
 
+    # Restore the cursor state
+    os.system("echo '\\033[?25h'")
 
 async def noninteractive_main():
     def signal_handler(sig, frame):
