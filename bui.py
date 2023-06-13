@@ -53,6 +53,8 @@ def insert_shell(result):
 
 def display(segments, focused_index):
     global scroll
+    global num_visible_lines
+
     result = []
     newlines = 0
     ready_for_shell = False
@@ -113,10 +115,12 @@ def display(segments, focused_index):
     response_text = Text().join(result)
 
     lines = response_text.split("\n")
-    num_visible_lines = len(lines)
     if scroll > 0:
         remaining_lines = lines[scroll:]
+        num_visible_lines = len(remaining_lines)
         response_text = Text("\n").join(remaining_lines)
+    else:
+        num_visible_lines = len(lines)
 
     show_turn = bhistory.get_turn() < bhistory.max_turn() or bhistory.get_message_role() != 'assistant'
     #show_turn = True
@@ -234,7 +238,7 @@ def down():
     global focused_index
     global num_visible_lines
 
-    if num_visible_lines > 1:
+    if num_visible_lines > 10:
         scroll = scroll + 1
     elif bhistory.move_forward():
         focused_index = 0
