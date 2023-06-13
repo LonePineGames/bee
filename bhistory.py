@@ -6,6 +6,8 @@ import sqlite3
 import sys
 
 import bconfig
+import bbash
+import bui
 
 history_file_path = Path.home() / ".bee_history2"
 
@@ -26,6 +28,9 @@ def setup():
     # Create the path to the database file in the user's home directory
     db_file = os.path.join(home_dir, ".bee_history2.db")
 
+    # Check if the database file exists
+    db_file_exists = os.path.isfile(db_file)
+
     # Connect to the database
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
@@ -40,6 +45,11 @@ def setup():
         system_messages TEXT
     )''')
 
+    if not db_file_exists:
+        new_turn()
+        set_message('user', 'Hello, Bee!')
+        set_message('assistant', 'Hi! I\'m Bee, your personal assistant.', finished=True)
+
     if current_turn < 0:
         current_turn = max_turn() + current_turn
 
@@ -51,6 +61,7 @@ def new_turn():
     global current_turn
     c.execute('''INSERT INTO history (timestamp) VALUES (?)''', (datetime.now(),))
     current_turn = c.lastrowid
+    bui.print(current_turn)
 
 def set_turn(turn):
     global current_turn
@@ -78,45 +89,67 @@ def max_turn():
     c.execute('''SELECT MAX(id) FROM history''')
     result = c.fetchone()[0]
     if result == None:
-        return 0
+        return 1
     return result
 
 def min_turn():
-    return 0
+    return 1
 
-def history_move_forward():
-    global current_turn
-    global current_message_role
-
-    if current_message_role == 'assistant':
-        current_message_role = 'user'
-        return
-
-    if current_turn == -1:
-        return
-
-    if current_turn == max_turn():
-        return
-
-    next_turn = current_turn + 1
-    current_message_role = 'assistant'
-
-def history_move_backward():
+def move_forward():
     global current_turn
     global current_message_role
 
     if current_message_role == 'user':
         current_message_role = 'assistant'
-        return
+        return True
 
-    if current_turn == 0:
-        return
+    if current_turn == -1:
+        return False
+
+    if current_turn == max_turn():
+        return False
+
+    current_turn = current_turn + 1
+    current_message_role = 'user'
+    return True
+
+def move_backward():
+    global current_turn
+    global current_message_role
+    global response_finished
+
+    if current_message_role == 'assistant':
+        current_message_role = 'user'
+        response_finished = True
+        return True
 
     if current_turn == min_turn():
-        return
+        return False
 
-    next_turn = current_turn - 1
-    current_message_role = 'user'
+    current_turn = current_turn - 1
+    current_message_role = 'assistant'
+    response_finished = True
+    return True
+
+def get_name(role=None):
+    global current_turn
+    global current_message_role
+
+    if role == None:
+        role = current_message_role
+
+    if role == 'user':
+        c.execute('''SELECT user_name FROM history WHERE id = ?''', (current_turn,))
+        result = c.fetchone()
+        if result is None:
+            return bconfig.your_name
+        return result[0]
+
+    elif role == 'assistant':
+        return bconfig.name
+
+    else:
+        return role
 
 def get_message(role=None):
     global current_turn
@@ -125,19 +158,24 @@ def get_message(role=None):
     if role == None:
         role = current_message_role
 
+    result = None
+
     if role == 'user':
         c.execute('''SELECT user_message FROM history WHERE id = ?''', (current_turn,))
-        return c.fetchone()[0]
+        result = c.fetchone()
 
-    if role == 'assistant':
+    elif role == 'assistant':
         c.execute('''SELECT assistant_message FROM history WHERE id = ?''', (current_turn,))
-        return c.fetchone()[0]
+        result = c.fetchone()
 
-    if role == 'system':
+    elif role == 'system':
         c.execute('''SELECT system_messages FROM history WHERE id = ?''', (current_turn,))
-        return c.fetchone()[0]
+        result = c.fetchone()
 
-    return None
+    if result is not None:
+        return result[0]
+
+    return ''
 
 def set_message(role, message, finished=True):
     global current_turn
@@ -146,7 +184,8 @@ def set_message(role, message, finished=True):
     response_finished = finished
 
     if role == 'user':
-        c.execute('''UPDATE history SET user_message = ? WHERE id = ?''', (message, current_turn))
+        user_name = bbash.get_user_name()
+        c.execute('''UPDATE history SET user_message = ?, user_name = ? WHERE id = ?''', (message, user_name, current_turn))
         return
 
     elif role == 'assistant':

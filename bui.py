@@ -13,6 +13,7 @@ import bconfig
 import bhistory
 
 scroll = 0
+num_visible_lines = 0
 focused_index = 0
 response = ''
 segments = []
@@ -50,7 +51,8 @@ def insert_shell(result):
     shell_text = '\n'.join(shell_text.split('\n')[-bconfig.shell_lines:])
     result.append(Text(shell_text, style=style('shell')))
 
-def display(segments, focused_index, scroll):
+def display(segments, focused_index):
+    global scroll
     result = []
     newlines = 0
     ready_for_shell = False
@@ -62,7 +64,7 @@ def display(segments, focused_index, scroll):
         state_emoji = '⏳ '
 
     # 🗨️ 💬
-    result.append(Text(bconfig.name + " 💬" + state_emoji + " ", style=style('name')))
+    result.append(Text(bhistory.get_name() + " 💬" + state_emoji + " ", style=style('name')))
 
     for i, segment in enumerate(segments):
         mode = segment["mode"]
@@ -110,13 +112,20 @@ def display(segments, focused_index, scroll):
     # Merge the segments together
     response_text = Text().join(result)
 
+    lines = response_text.split("\n")
+    num_visible_lines = len(lines)
     if scroll > 0:
-        lines = response_text.split("\n")
         remaining_lines = lines[scroll:]
         response_text = Text("\n").join(remaining_lines)
 
-    #if len(segments) > 1 and bconfig.instructions:
-    if len(segments) > 1 and bconfig.instructions and not bconfig.exit_immediately and not done:
+    show_turn = bhistory.get_turn() < bhistory.max_turn() or bhistory.get_message_role() != 'assistant'
+    show_turn = True
+    if show_turn:
+        message_num = Text(f"{bhistory.get_message_role()} message #{bhistory.get_turn()} of {bhistory.max_turn()}\n", style=style('message_num'))
+        response_text = Text.assemble(message_num, response_text)
+
+    instructions = bconfig.instructions and not bconfig.exit_immediately and not done and (len(segments) > 1 or show_turn)
+    if instructions:
         instructions = Text(bconfig.instructions + '\n', style=style('instructions'))
         response_text = Text.assemble(instructions, response_text)
 
@@ -185,7 +194,6 @@ def update():
     global code_sections
     global live
     global focused_index
-    global scroll
 
     if live is None:
         return
@@ -196,7 +204,7 @@ def update():
     code_sections = filter_code_sections(segments)
     code_ndx = code_sections[focused_index]["ndx"] if len(code_sections) > 0 else -1
 
-    response_text = display(segments, code_ndx, scroll)
+    response_text = display(segments, code_ndx)
     live.update(response_text)
     live.refresh()
 
@@ -210,11 +218,20 @@ def left():
 
 def up():
     global scroll
-    scroll = max(scroll - 1, 0)
+    scroll = scroll - 1
+
+    if scroll < 0:
+        bhistory.move_backward()
+        scroll = 0
 
 def down():
     global scroll
-    scroll = scroll + 1
+    global num_visible_lines
+
+    if num_visible_lines > 1:
+        scroll = scroll + 1
+    elif bhistory.move_forward():
+        scroll = 0
 
 def num_code_sections():
     global code_sections

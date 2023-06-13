@@ -88,6 +88,12 @@ def history_info_source(characters=5000):
 
     return bash_history_info_source
 
+def get_user_name():
+    try:
+        return os.getenv("USER")
+    except Exception as e:
+        return bconfig.your_name
+
 def context_info_source():
     def bash_context_info_source():
         user = os.getenv("USER")

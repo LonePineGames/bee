@@ -2,7 +2,7 @@ name = "🐝Bee"
 your_name = "User"
 cursor = "_\n\t\t🐝"
 #cursor = '' # if its glitchy, disable it
-magic = True
+magic = False
 curtain = True
 model = "gpt-3.5-turbo"
 #model = "gpt-4"
@@ -15,6 +15,7 @@ test_response = "Test response: `tail b` okay? `ls -la` `mkdir test` `rmdir test
 
 styles = {
     'instructions': 'gray30',
+    'message_num': 'light_blue',
     'name': 'bold green',
     'text': 'bold yellow',
     'code': 'bold blue',

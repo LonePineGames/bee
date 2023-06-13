@@ -62,7 +62,7 @@ async def get_bee_response(message):
             message += chunk
             update_response(message)
 
-        call_openai_api(prompt_messages, openai_api_callback)
+        bopenai.call_openai_api(prompt_messages, openai_api_callback)
         update_response(message, finished=True)
 
     else:
@@ -134,6 +134,7 @@ async def main():
     cancelable.append(bhistory)
 
     message = parse_args_and_input()
+    get_bee_response_task = None
 
     if message != "":
         bhistory.new_turn()
@@ -144,6 +145,8 @@ async def main():
 
         get_bee_response_task = asyncio.create_task(get_bee_response(message))
         cancelable.append(get_bee_response_task)
+    else:
+        bhistory.response_finished = True
 
     if bconfig.exit_immediately or not interactive:
         bui.done = True
@@ -162,7 +165,8 @@ async def main():
 
         bui.update()
 
-    await asyncio.gather(get_bee_response_task)
+    if get_bee_response_task is not None:
+        await asyncio.gather(get_bee_response_task)
 
     if not interactive:
         print_noninteractive_response()
