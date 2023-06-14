@@ -5,6 +5,7 @@ cursor = "_\n\t\t🐝"
 magic = True
 curtain = True
 model = "gpt-3.5-turbo"
+max_request_tokens = 800
 #model = "gpt-4"
 shell_lines = 20
 no_history = False

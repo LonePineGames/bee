@@ -9,6 +9,7 @@ import time
 
 import bargs
 import bbash
+import bbudget
 import bconfig
 import bhistory
 import bopenai
@@ -29,11 +30,16 @@ def collect_prompt_messages():
         messages = info_source()
         prompt_messages.extend(messages)
 
+    # filter empty messages
+    prompt_messages = [message for message in prompt_messages if message["content"] != ""]
+
+    prompt_messages = bbudget.trim_messages_to_budget(prompt_messages)
+
     # Filter for length
-    prompt_messages = [{
-        "role": message["role"],
-        "content": message["content"][:1000]
-    } for message in prompt_messages]
+    #prompt_messages = [{
+        #"role": message["role"],
+        #"content": message["content"][:1000]
+    #} for message in prompt_messages]
 
     return prompt_messages
 
