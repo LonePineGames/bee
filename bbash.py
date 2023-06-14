@@ -118,6 +118,18 @@ def execute():
 
     selected_section = bui.get_selection()
 
+    lines = selected_section.split("\n")
+    any_dollar_sign = False
+    for line in lines:
+        if line.strip().startswith("$"):
+            any_dollar_sign = True
+            break
+
+    if any_dollar_sign:
+        lines = list(filter(lambda line: line.strip().startswith("$"), lines))
+        lines = list(map(lambda line: line.strip()[1:].strip(), lines))
+        selected_section = "\n".join(lines)
+
     bui.append_to_shell_segment("\n💻 $ " + selected_section + "\n")
 
     if current_bash_client is None:
