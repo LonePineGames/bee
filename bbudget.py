@@ -19,7 +19,7 @@ def trim_messages_to_budget(messages):
         if message["tokens"] > cap:
             overage = message["tokens"] - cap + 1 # Extra token for ellipsis
             content = tokenizer.encoding.encode(message["content"])
-            if message["trim_from"] == "start":
+            if message.get("trim_from") == "start":
                 message["content"] = '...' + tokenizer.encoding.decode(content[overage:])
             else:
                 message["content"] = tokenizer.encoding.decode(content[:-overage]) + '...'

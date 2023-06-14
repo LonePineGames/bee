@@ -10,6 +10,11 @@ def call_openai_api(prompt_messages, callback):
 
     message = ''
 
+    prompt_messages = [{
+        'role': message['role'],
+        'content': message['content'],
+    } for message in prompt_messages ]
+
     try:
         import openai
         from apikey import OPENAI_API_KEY
