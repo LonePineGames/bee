@@ -84,7 +84,7 @@ def history_info_source(characters=5000):
         history = fetch_history(characters)
         history = "BASH HISTORY: ```\n" + history.strip() + "\n```"
 
-        return [{"role": "system", "content": history}]
+        return [{"role": "system", "content": history, "trim_from": "start"}]
 
     return bash_history_info_source
 

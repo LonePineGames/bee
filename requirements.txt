@@ -1,10 +1,10 @@
 argparse
 asyncio
 gitpython
+openai
 pathlib
+pyjokes
 pyperclip
 rich
-pyjokes
-openai
 tiktoken
 
