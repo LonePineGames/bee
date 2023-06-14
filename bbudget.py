@@ -6,7 +6,7 @@ import bui
 import bconfig
 
 def trim_messages_to_budget(messages):
-    bui.print("Trimming messages to budget.")
+    #bui.print(f"Trimming {len(messages)} messages to budget.")
 
     tokenizer = get_tokenizer()
     messages = compute_message_lengths(messages, tokenizer)
@@ -26,11 +26,13 @@ def trim_messages_to_budget(messages):
 
     messages = compute_message_lengths(messages, tokenizer)
     num_tokens = sum(message["tokens"] for message in messages) + tokenizer.tokens_per_reply
-    bui.print("Trimmed messages to budget.")
-    bui.print(f"Original total: {original_total}")
-    bui.print(f"Budget: {bconfig.max_request_tokens}")
-    bui.print(f"Cap: {cap}")
-    bui.print(f"Num tokens: {num_tokens}")
+
+    #bui.print("Trimmed messages to budget.")
+    #bui.print(f"Original total: {original_total}")
+    #bui.print(f"Budget: {bconfig.max_request_tokens}")
+    #bui.print(f"Cap: {cap}")
+    #bui.print(f"Num tokens: {num_tokens}")
+
     return messages
 
 def get_tokenizer():

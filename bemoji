@@ -2,6 +2,6 @@
 
 msg=$(printf "I'm looking for the \"%s\" emoji. Please output emojis wrapped in backquotes, since that makes it easier for me to copy. Output emojis in the following format:\n\n    \`🌼\` - \`🏤\` - \`🐯\` - \`🌃\` - \`🕰️\` - \`✌️\` - \`💯\`\n\nPlease return the best available emojis matching my query: \"%s\"." "$@" "$@")
 
-echo -e "$msg\n"
+#echo -e "$msg\n"
 
 b -c $@ '...' "$msg"

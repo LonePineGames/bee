@@ -18,7 +18,7 @@ def parse_args():
     parser.add_argument('--num-turns', action='store_true', help='Output the number of turns so far, then quit')
     parser.add_argument('--blocks', action='store_true', help='Only show code blocks')
     parser.add_argument('--exit-immediately', action='store_true', help='Exit after getting the response')
-    parser.add_argument('--show', choices=['user', 'system', 'assistant'], help='Show user or system message')
+    parser.add_argument('--show', choices=['user', 'prompt', 'assistant'], help='Show previous user message or entire prompt')
 
     args, unknown = parser.parse_known_args()
 
@@ -43,7 +43,10 @@ def parse_args():
         exit()
 
     if args.show:
-        bhistory.set_message_role(args.show)
+        role = args.show
+        if args.show == 'prompt':
+            role = 'system'
+        bhistory.set_message_role(role)
 
     #if args.help:
         #bui.live.update(Text.assemble(("🐝 Bee ", bui.style("name")), ("version 0.1", bui.style("code"))))

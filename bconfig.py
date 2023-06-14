@@ -61,7 +61,7 @@ keymap = {
     'j': bui.left,
     'k': bui.right,
     'y': byank.copy,
-    '\n': byank.copy,
+    '\n': bui.quit,
 };
 
 info_sources = [

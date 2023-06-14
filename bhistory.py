@@ -104,7 +104,7 @@ def move_forward():
     global current_turn
     global current_message_role
 
-    if current_message_role == 'user':
+    if current_message_role != 'assistant':
         current_message_role = 'assistant'
         return True
 
@@ -123,7 +123,7 @@ def move_backward():
     global current_message_role
     global response_finished
 
-    if current_message_role == 'assistant':
+    if current_message_role != 'user':
         current_message_role = 'user'
         response_finished = True
         return True
