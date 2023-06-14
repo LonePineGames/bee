@@ -7,4 +7,5 @@ pyjokes
 pyperclip
 rich
 tiktoken
+distro
 

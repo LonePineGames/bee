@@ -1,6 +1,9 @@
 import asyncio
+import datetime
+import distro
 import os
 from pathlib import Path
+import platform
 import re
 from rich.text import Text
 import subprocess
@@ -96,14 +99,30 @@ def get_user_name():
 
 def context_info_source():
     def bash_context_info_source():
+
+        # Get user, cwd, and current time
         user = os.getenv("USER")
-        host = os.getenv("HOSTNAME")
         cwd = os.getcwd()
-        uname = subprocess.check_output("uname -a", shell=True).decode().strip()
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        context = f"USER: {user}\nHOST: {host}\nCWD: {cwd}\nUNAME: {uname}"
+        # Get OS information
+        os_name = platform.system()
+        os_version = platform.version()
+        distro_info = distro.linux_distribution()
 
-        return [{"role": "system", "content": context}]
+        # Get shell and editor
+        shell = os.getenv("SHELL")
+        editor = os.getenv("EDITOR") or os.getenv("VISUAL")
+
+        context_info = f"""CONTEXT:
+time: {current_time}
+os: {os_name}/{distro_info[0]} {distro_info[1]}/{platform.machine()}
+user: {user}
+cwd: {cwd}
+editor: {editor}
+shell: {os.path.basename(shell)}"""
+
+        return [{"role": "system", "content": context_info}]
 
     return bash_context_info_source
 
