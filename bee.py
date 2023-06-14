@@ -57,6 +57,9 @@ async def get_bee_response(message):
         bui.print(prompt_messages)
 
     if bconfig.magic:
+        if interactive:
+            bui.setup_live('Thinking')
+
         bopenai.call_openai_api(prompt_messages, update_response)
         bhistory.finish_response()
 
@@ -122,6 +125,10 @@ async def main():
 
     interactive = os.isatty(sys.stdout.fileno())
 
+    bhistory.setup()
+    cancelable.append(bhistory)
+    message = parse_args_and_input()
+
     if interactive:
         # Save the current cursor state
         os.system("echo -n '\\033[?25p'")
@@ -129,10 +136,6 @@ async def main():
 
         bui.setup_live('Reading')
 
-    bhistory.setup()
-    cancelable.append(bhistory)
-
-    message = parse_args_and_input()
     get_bee_response_task = None
 
     if bconfig.exit_immediately or not interactive:
@@ -141,9 +144,6 @@ async def main():
     if message != "":
         bhistory.new_turn()
         bhistory.set_message('user', message)
-
-        if interactive:
-            bui.setup_live('Thinking')
 
         get_bee_response_task = asyncio.create_task(get_bee_response(message))
         cancelable.append(get_bee_response_task)

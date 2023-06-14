@@ -15,6 +15,7 @@ def parse_args():
     parser.add_argument('-t', '--test', action='store_true', help='Test output')
     parser.add_argument('-c', '--clear', action='store_true', help='No conversation history')
     parser.add_argument('-T', '--turn', action='store', type=int, help='Show conversation history')
+    parser.add_argument('--num-turns', action='store_true', help='Output the number of turns so far, then quit')
     parser.add_argument('--blocks', action='store_true', help='Only show code blocks')
     parser.add_argument('--exit-immediately', action='store_true', help='Exit after getting the response')
     parser.add_argument('--show', choices=['user', 'system', 'assistant'], help='Show user or system message')
@@ -36,6 +37,10 @@ def parse_args():
     if args.turn:
         bhistory.set_turn(args.turn)
         unknown = []
+
+    if args.num_turns:
+        print(bhistory.max_turn())
+        exit()
 
     if args.show:
         bhistory.set_message_role(args.show)
