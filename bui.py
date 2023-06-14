@@ -238,6 +238,9 @@ def down():
     global focused_index
     global num_visible_lines
 
+    #height, width = live.console.size
+    #print(live._live_renderer._shape)
+    #if num_visible_lines > height - 4:
     if num_visible_lines > 10:
         scroll = scroll + 1
     elif bhistory.move_forward():
