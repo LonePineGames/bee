@@ -73,7 +73,7 @@ info_sources = [
     bbash.context_info_source(),
 
     # Git
-    bgit.info_source('status,log:5'),
+    bgit.info_source('status,upstream,files,log:3'),
 
     # Shell History
     bbash.history_info_source(characters=5000),

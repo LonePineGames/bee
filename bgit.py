@@ -15,26 +15,58 @@ def info_source(config, role="system"):
 
             for command in config.split(','):
                 if command == 'status':
-                    status_output = repo.git.status()
+                    bui.print("-- GIT STATUS --")
+                    branch = repo.active_branch.name
+                    dirty = repo.is_dirty()
 
-                    result.append(f"branch: {repo.active_branch}")
-                    if repo.is_dirty():
-                        result.append("dirty")
-                    if 'MERGING' in status_output:
-                        result.append("MERGE in progress")
-                    if 'REBASING' in status_output:
-                        result.append("REBASE in progress")
+                    merge_head = os.path.join(repo.git_dir, "MERGE_HEAD")
+                    merge_in_progress = os.path.exists(merge_head)
+                    rebase_in_progress = ".git/rebase-apply" in repo.submodules
 
-                    lines = status_output.split('\n')
-                    modified_files = [line.replace('modified:', '').strip() for line in lines if 'modified:' in line]
+                    state = "dirty" if dirty else "clean"
+                    if merge_in_progress:
+                        state = "merge in progress"
+                    elif rebase_in_progress:
+                        state = "rebase in progress"
+                    result.append(f"branch: {branch} ({state})")
 
-                    result.append(f"modified files: {', '.join(modified_files)}")
+                elif command == 'files':
+                    files = {
+                        "🛠️ modified": [item.a_path for item in repo.index.diff(None)],
+                        "📝 added": [item.a_path for item in repo.index.diff("HEAD")],
+                        "📝 untracked": repo.untracked_files,
+                        "🗑️ deleted": [item.a_path for item in repo.index.diff(None) if item.deleted_file],
+                    }
+
+                    for key, value in files.items():
+                        if value:
+                            if len(value) > 5:
+                                value = value[:5] + ["..."]
+                            result.append(f"{key}: {', '.join(value)}")
 
                 elif command == 'diff':
-                    result.append("-- DIFF --\n" + repo.git.diff())
+                    result.append("-- GIT DIFF --\n" + repo.git.diff())
+
+                elif command == 'upstream':
+                    try:
+                        branch = repo.active_branch.name
+                        upstream = f"origin/{branch}"
+                        ahead, behind = repo.git.rev_list("--count", "--left-right", f"HEAD...{upstream}").split()
+
+                        if int(ahead) > 0:
+                            result.append(f"👉 We are {ahead} commits ahead of {upstream}")
+                        if int(behind) > 0:
+                            result.append(f"👈 {upstream} is {behind} commits ahead of us")
+
+                        if not ahead and not behind:
+                            result.append("No commits to push or pull.")
+
+                    except Exception as e:
+                        result.append("No upstream branch found.")
+
 
                 elif command.startswith('log:'):
-                    result.append("-- HISTORY --\n" + repo.git.log('--oneline', '-' + command[4:]))
+                    result.append("-- GIT HISTORY --\n" + repo.git.log('--oneline', '-' + command[4:]))
                 else:
                     pass
 
@@ -44,7 +76,8 @@ def info_source(config, role="system"):
             return [{ "role": role, "content": content }]
 
         except Exception as e:
-            return [{ "role": role, "content": "Not a git repository" }]
+            bui.print("Not a git repository: " + str(e))
+            return [{ "role": role, "content": "Not a git repository: " + str(e) }]
 
     return git_info_source
 
