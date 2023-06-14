@@ -45,7 +45,9 @@ def setup():
         user_name TEXT,
         user_message TEXT,
         assistant_message TEXT,
-        system_messages TEXT
+        system_messages TEXT,
+        request_tokens INTEGER,
+        response_tokens INTEGER
     )''')
 
     if not db_file_exists:
@@ -180,7 +182,7 @@ def get_message(role=None):
 
     return ''
 
-def set_message(role, message, finished=False):
+def set_message(role, message, tokens=-1, finished=False):
     global current_turn
 
     if role == 'user':
@@ -189,10 +191,10 @@ def set_message(role, message, finished=False):
         return
 
     elif role == 'assistant':
-        c.execute('''UPDATE history SET assistant_message = ? WHERE id = ?''', (message, current_turn))
+        c.execute('''UPDATE history SET assistant_message = ?, response_tokens = ? WHERE id = ?''', (message, tokens, current_turn))
 
     elif role == 'system':
-        c.execute('''UPDATE history SET system_messages = ? WHERE id = ?''', (message, current_turn))
+        c.execute('''UPDATE history SET system_messages = ?, request_tokens = ? WHERE id = ?''', (message, tokens, current_turn))
 
 def finish_response():
     global response_finished
@@ -218,7 +220,21 @@ def set_system_messages(messages):
     # Encode the messages as a JSON string
     json_messages = json.dumps(messages)
 
-    set_message('system', json_messages)
+    tokens = 3
+    for message in messages:
+        tokens += message['tokens']
+
+    set_message('system', json_messages, tokens=tokens)
+
+# Usage: req_tokens, resp_tokens = bhistory.get_message_tokens()
+def get_message_tokens():
+    global current_turn
+    c.execute('''SELECT request_tokens, response_tokens FROM history WHERE id = ?''', (current_turn,))
+    result = c.fetchone()
+
+    if result is None:
+        return 0, 0
+    return result[0], result[1]
 
 def info_source(turns=2):
     def history_info_source():

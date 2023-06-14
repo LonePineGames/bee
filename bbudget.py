@@ -78,6 +78,9 @@ def compute_message_lengths(messages, tokenizer):
 
     return messages
 
+def count_tokens(text):
+    tokenizer = get_tokenizer()
+    return len(tokenizer.encoding.encode(text))
 
 #array = [10, 20, 30, 40, 50]
 #array = [0, 5, 20, 100, 100]

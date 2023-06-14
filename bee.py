@@ -49,7 +49,8 @@ def update_response(response):
     if response.startswith(bconfig.name):
         response = response[len(bconfig.name):]
 
-    bhistory.set_message('assistant', response)
+    tokens = bbudget.count_tokens(response)
+    bhistory.set_message('assistant', response, tokens=tokens)
 
     if interactive:
         bui.update()

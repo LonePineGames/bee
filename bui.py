@@ -125,8 +125,10 @@ def display(segments, focused_index):
     show_turn = bhistory.get_turn() < bhistory.max_turn() or bhistory.get_message_role() != 'assistant'
     #show_turn = True
     if show_turn:
-        message_num = Text(f"{bhistory.get_message_role()} message #{bhistory.get_turn()} of {bhistory.max_turn()}\n", style=style('message_num'))
-        response_text = Text.assemble(message_num, response_text)
+        req_tokens, resp_tokens = bhistory.get_message_tokens()
+        message_num = Text(f"{bhistory.get_message_role()} message #{bhistory.get_turn()} of {bhistory.max_turn()}", style=style('message-num'))
+        tokens = Text(f" -- Tokens used: {req_tokens} request / {resp_tokens} response\n", style=style('tokens'))
+        response_text = Text.assemble(message_num, tokens, response_text)
 
     instructions = bconfig.instructions and not bconfig.exit_immediately and not done and (len(segments) > 1 or show_turn)
     if instructions:

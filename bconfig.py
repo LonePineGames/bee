@@ -16,7 +16,8 @@ test_response = "Test response: `tail b` okay? `ls -la` `mkdir test` `rmdir test
 
 styles = {
     'instructions': 'gray30',
-    'message_num': 'light_blue',
+    'message-num': 'green',
+    'tokens': 'gray30',
     'name': 'bold green',
     'text': 'bold yellow',
     'code': 'bold blue',
