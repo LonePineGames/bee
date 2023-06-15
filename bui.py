@@ -228,10 +228,12 @@ def left():
 def up():
     global scroll
     global focused_index
+    global shell_output
     scroll = scroll - 1
 
     if scroll < 0:
         if bhistory.move_backward():
+            shell_output = []
             focused_index = 0
         scroll = 0
 
@@ -239,6 +241,7 @@ def down():
     global scroll
     global focused_index
     global num_visible_lines
+    global shell_output
 
     #height, width = live.console.size
     #print(live._live_renderer._shape)
@@ -246,6 +249,7 @@ def down():
     if num_visible_lines > 10:
         scroll = scroll + 1
     elif bhistory.move_forward():
+        shell_output = []
         focused_index = 0
         scroll = 0
 
