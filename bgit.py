@@ -71,7 +71,7 @@ def info_source(config, role="system"):
                     pass
 
             content = '\n'.join(result)
-            bui.print(content)
+            #bui.print(content)
 
             return [{ "role": role, "content": content }]
 

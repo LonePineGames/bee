@@ -97,6 +97,11 @@ def parse_args_and_input():
             message = message + '\n' + stdin_message
             message = message.strip()
 
+    if bconfig.count_tokens:
+        tokens = bbudget.count_tokens(message)
+        bui.print(str(tokens))
+        exit(0)
+
     return message
 
 def restore_cursor():

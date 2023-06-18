@@ -19,6 +19,7 @@ def parse_args():
     parser.add_argument('--blocks', action='store_true', help='Only show code blocks')
     parser.add_argument('--exit-immediately', action='store_true', help='Exit after getting the response')
     parser.add_argument('--show', choices=['user', 'prompt', 'assistant'], help='Show previous user message or entire prompt')
+    parser.add_argument('-C', '--count-tokens', action='store_true', help='Count tokens in the user message and piped input.')
 
     args, unknown = parser.parse_known_args()
 
@@ -77,6 +78,9 @@ def parse_args():
 
     if args.exit_immediately:
         bconfig.exit_immediately = True
+
+    if args.count_tokens:
+        bconfig.count_tokens = True
 
     return ' '.join(unknown)
 

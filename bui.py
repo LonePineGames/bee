@@ -1,4 +1,5 @@
 import asyncio
+from builtins import print as native_print
 import os
 import pyperclip
 from pathlib import Path
@@ -276,10 +277,11 @@ def append_to_shell_segment(msg):
     #live.console.print(Text(msg, style=style('shell')), end="")
     #live.refresh()
 
+
 def print(args, style=''):
     global live
     if live is not None:
         live.console.print(args, style=style)
     else:
-        print(args)
+        native_print(args)
 

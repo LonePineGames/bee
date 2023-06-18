@@ -5,13 +5,14 @@ cursor = "_\n\t\t🐝"
 magic = True
 curtain = True
 model = "gpt-3.5-turbo"
-max_request_tokens = 800
+max_request_tokens = 2000
 #model = "gpt-4"
 shell_lines = 20
 no_history = False
 only_blocks = False
 animate_previous_response = False
 exit_immediately = False
+count_tokens = False
 test_response = "Test response: `tail b` okay? `ls -la` `mkdir test` `rmdir test` and `touch hello` then `rm hello` `echo 'hi'` `pip install rich`"
 
 styles = {

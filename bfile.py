@@ -43,7 +43,7 @@ def info_source(role="user"):
             if os.path.isfile(filename) == False:
                 continue
 
-            contents = read_around_cursor(filename, num_chars=1000)
+            contents = read_around_cursor(filename, num_chars=20000)
             #print(contents)
             if contents:
                 results.append({ "role": role, "content": f"--- {filename} ---\n{contents}" })
