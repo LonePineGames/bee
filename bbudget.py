@@ -4,6 +4,7 @@ from types import SimpleNamespace
 
 import bui
 import bconfig
+import bmodel
 
 def trim_messages_to_budget(messages):
     #bui.print(f"Trimming {len(messages)} messages to budget.")
@@ -110,4 +111,14 @@ def binary_search(budget, message_lengths, low, high):
 def is_valid_cap(budget, message_lengths, cap):
     total_length = sum(min(length, cap) for length in message_lengths)
     return total_length <= budget
+
+def estimate_cost(input_tokens, output_tokens):
+    model = bmodel.models[bconfig.model]
+    if model is None:
+        return 0
+
+    cost_structure = model["cost_per_million"]
+    cost = (input_tokens * cost_structure["input"] + output_tokens * cost_structure["output"]) / 1000000
+
+    return cost
 

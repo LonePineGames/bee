@@ -60,13 +60,13 @@ def parse_args():
         #print("  -h, --help           Show this help message and exit")
         #exit()
 
-    model = "gpt-3.5-turbo"
+    model = bconfig.model3
     if args.model:
         model = args.model
     elif args.gpt_4:
-        model = "gpt-4"
+        model = bconfig.model4
     elif args.gpt_3:
-        model = "gpt-3.5-turbo"
+        model = bconfig.model3
 
     bconfig.model = model
 

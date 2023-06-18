@@ -126,9 +126,19 @@ def display(segments, focused_index):
     show_turn = bhistory.get_turn() < bhistory.max_turn() or bhistory.get_message_role() != 'assistant'
     #show_turn = True
     if show_turn:
-        req_tokens, resp_tokens = bhistory.get_message_tokens()
         message_num = Text(f"{bhistory.get_message_role()} message #{bhistory.get_turn()} of {bhistory.max_turn()}", style=style('message-num'))
-        tokens = Text(f" -- Tokens used: {req_tokens} request / {resp_tokens} response\n", style=style('tokens'))
+
+        req_tokens, resp_tokens, cost = bhistory.get_message_tokens()
+        cost_str = ''
+        if cost is not None and cost > 0:
+            cost_str = ' / '
+            if cost < 1:
+                cost *= 100
+                cost_str = cost_str + f"{cost:.0f}¢"
+            else:
+                cost_str = cost_str + f"\${cost:.2f}"
+        tokens = Text(f" -- cost estimate: {req_tokens}req / {resp_tokens}resp{cost_str}\n", style=style('tokens'))
+
         response_text = Text.assemble(message_num, tokens, response_text)
 
     instructions = bconfig.instructions and not bconfig.exit_immediately and not done and (len(segments) > 1 or show_turn)

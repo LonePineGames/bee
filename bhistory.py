@@ -7,6 +7,7 @@ import sys
 
 import bconfig
 import bbash
+import bbudget
 import bui
 
 history_file_path = Path.home() / ".bee_history2"
@@ -48,12 +49,19 @@ def setup():
         system_messages TEXT,
         request_tokens INTEGER,
         response_tokens INTEGER
+        cost_estimate FLOAT
     )''')
+
+    # Alter table to add cost_estimate column if it doesn't exist
+    c.execute('''SELECT * FROM history LIMIT 1''')
+    result = c.fetchone()
+    if len(result) < 9:
+        c.execute('''ALTER TABLE history ADD COLUMN cost_estimate FLOAT''')
 
     if not db_file_exists:
         new_turn()
         set_message('user', 'Hello, Bee!')
-        set_message('assistant', 'Hi! I\'m Bee, your personal assistant.', finished=True)
+        set_message('assistant', 'Hi! I\'m Bee, your personal assistant.')
 
     if current_turn < 0:
         current_turn = max_turn() + current_turn + 1
@@ -182,7 +190,7 @@ def get_message(role=None):
 
     return ''
 
-def set_message(role, message, tokens=-1, finished=False):
+def set_message(role, message, tokens=0):
     global current_turn
 
     if role == 'user':
@@ -191,7 +199,7 @@ def set_message(role, message, tokens=-1, finished=False):
         return
 
     elif role == 'assistant':
-        c.execute('''UPDATE history SET assistant_message = ?, response_tokens = ? WHERE id = ?''', (message, tokens, current_turn))
+        c.execute('''UPDATE history SET assistant_message = ? WHERE id = ?''', (message, current_turn))
 
     elif role == 'system':
         c.execute('''UPDATE history SET system_messages = ?, request_tokens = ? WHERE id = ?''', (message, tokens, current_turn))
@@ -200,7 +208,7 @@ def finish_response():
     global response_finished
     response_finished = True
 
-    # Append the current turn to the history file
+    # Compute tokens and costs on the last message
     c.execute('''SELECT * FROM history WHERE id = ?''', (current_turn,))
     result = c.fetchone()
 
@@ -209,10 +217,15 @@ def finish_response():
     user_name = result[2]
     user_message = result[3]
     assistant_message = result[4]
-    #system_messages = result[5]
+    system_messages = result[5]
+    request_tokens = result[6]
+    response_tokens = bbudget.count_tokens(assistant_message)
+    cost = bbudget.estimate_cost(request_tokens, response_tokens)
 
+    c.execute('''UPDATE history SET response_tokens = ?, cost_estimate = ? WHERE id = ?''', (response_tokens, cost, current_turn))
+
+    # Append the current turn to the history file
     message = f"{timestamp}\n{user_name}: {user_message}\n\n{bconfig.name}: {assistant_message}\n=====\n\n"
-
     with open(history_file_path, 'a') as f:
         f.write(message)
 
@@ -229,12 +242,12 @@ def set_system_messages(messages):
 # Usage: req_tokens, resp_tokens = bhistory.get_message_tokens()
 def get_message_tokens():
     global current_turn
-    c.execute('''SELECT request_tokens, response_tokens FROM history WHERE id = ?''', (current_turn,))
+    c.execute('''SELECT request_tokens, response_tokens, cost_estimate FROM history WHERE id = ?''', (current_turn,))
     result = c.fetchone()
 
     if result is None:
-        return 0, 0
-    return result[0], result[1]
+        return 0, 0, 0
+    return result[0], result[1], result[2]
 
 def info_source(turns=2):
     def history_info_source():

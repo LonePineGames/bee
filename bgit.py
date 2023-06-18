@@ -15,7 +15,7 @@ def info_source(config, role="system"):
 
             for command in config.split(','):
                 if command == 'status':
-                    bui.print("-- GIT STATUS --")
+                    result.append("-- GIT STATUS --")
                     branch = repo.active_branch.name
                     dirty = repo.is_dirty()
 
@@ -76,7 +76,7 @@ def info_source(config, role="system"):
             return [{ "role": role, "content": content }]
 
         except Exception as e:
-            bui.print("Not a git repository: " + str(e))
+            #bui.print("Not a git repository: " + str(e))
             return [{ "role": role, "content": "Not a git repository: " + str(e) }]
 
     return git_info_source
