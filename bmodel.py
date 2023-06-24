@@ -2,7 +2,7 @@ models = {
     "gpt-3.5-turbo": {
         "name": "gpt-3.5-turbo-0613",
         "encoder": "gpt-3.5-turbo-0301",
-        "context_length": 4000,
+        "context_length": 4096,
         "cost_per_million": {
             "input": 1.5,
             "output": 2,

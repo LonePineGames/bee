@@ -4,6 +4,7 @@
 import time
 
 import bconfig
+import bmodel
 import bui
 
 def call_openai_api(prompt_messages, callback):
@@ -20,15 +21,22 @@ def call_openai_api(prompt_messages, callback):
         from apikey import OPENAI_API_KEY
         openai.api_key = OPENAI_API_KEY
 
+        model = bmodel.models.get(bconfig.model)
+        if model is None:
+            msg = f"Model {bconfig.model} not found."
+            bui.print(msg, style=bui.style("error"))
+            exit(1)
+
         # record the time before the request is sent
         start_time = time.time()
 
         # send a ChatCompletion request
         # https://platform.openai.com/docs/guides/chat
+        max_tokens = bconfig.max_response_tokens
         response = openai.ChatCompletion.create(
-            model=bconfig.model,
+            model=model["name"],
             temperature=0.8,
-            max_tokens=1000,
+            max_tokens=max_tokens,
             stream=True,
             messages=prompt_messages,
         )

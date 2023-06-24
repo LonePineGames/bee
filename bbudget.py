@@ -9,9 +9,22 @@ import bmodel
 def trim_messages_to_budget(messages):
     #bui.print(f"Trimming {len(messages)} messages to budget.")
 
+    model = bconfig.model
+    model_info = bmodel.models[model]
+    context_length = model_info["context_length"]
+    context_length = context_length - 10 # Subtract 10 for margin
+    if bconfig.max_request_tokens + bconfig.max_response_tokens > context_length:
+        bconfig.max_request_tokens = context_length - bconfig.max_response_tokens
+        half_context = context_length // 2
+        if bconfig.max_request_tokens < half_context:
+            bconfig.max_request_tokens = half_context
+            bconfig.max_response_tokens = half_context
+
+        bui.print(f"Warning: max_request_tokens + max_response_tokens exceeds model context length. Setting max_request_tokens to {bconfig.max_request_tokens}.")
+
     tokenizer = get_tokenizer()
-    messages = compute_message_lengths(messages, tokenizer)
     budget = bconfig.max_request_tokens - tokenizer.tokens_per_reply
+    messages = compute_message_lengths(messages, tokenizer)
     message_lengths = [message["tokens"] for message in messages]
     original_total = sum(message_lengths) + tokenizer.tokens_per_reply
     cap = compute_cap(budget, message_lengths)
@@ -38,28 +51,26 @@ def trim_messages_to_budget(messages):
 
 def get_tokenizer():
     model = bconfig.model
-    if model == "gpt-3.5-turbo":
-        #print("Warning: gpt-3.5-turbo may change over time. Returning num tokens assuming gpt-3.5-turbo-0301.")
-        model="gpt-3.5-turbo-0301"
-    elif model == "gpt-4":
-        #print("Warning: gpt-4 may change over time. Returning num tokens assuming gpt-4-0314.")
-        model="gpt-4-0314"
+    model_info = bmodel.models[model]
+    if model_info is None:
+        raise Exception(f"Model {model} not found.")
+    encoder_model = model_info["encoder"]
 
     tokens_per_message = 4
-    if model == "gpt-3.5-turbo-0301":
+    if encoder_model == "gpt-3.5-turbo-0301":
         tokens_per_message = 4  # every message follows <|start|>{role/name}\n{content}<|end|>\n
-    elif model == "gpt-4-0314":
+    elif encoder_model == "gpt-4-0314":
         tokens_per_message = 3
     else:
         raise NotImplementedError(f"""num_tokens_from_messages() is not implemented for model {model}. See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are converted to tokens.""")
 
     result = SimpleNamespace()
-    result.model = model
+    result.model = encoder_model
     result.tokens_per_message = tokens_per_message
     result.tokens_per_reply = 3  # every reply is primed with <|start|>assistant<|message|>
 
     try:
-        result.encoding = tiktoken.encoding_for_model(model)
+        result.encoding = tiktoken.encoding_for_model(encoder_model)
     except KeyError:
         print("Warning: model not found. Using cl100k_base encoding.")
         result.encoding = tiktoken.get_encoding("cl100k_base")
