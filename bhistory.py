@@ -10,13 +10,15 @@ import bbash
 import bbudget
 import bui
 
-history_file_path = Path.home() / ".bee_history2"
+history_file = ".bee_history"
+history_file_path = Path.home() / history_file
 
 c = None
 conn = None
 current_turn = -1
 current_message_role = 'assistant'
 response_finished = False
+search_results = None
 
 def setup():
     global current_turn
@@ -27,7 +29,7 @@ def setup():
     home_dir = os.path.expanduser("~")
 
     # Create the path to the database file in the user's home directory
-    db_file = os.path.join(home_dir, ".bee_history2.db")
+    db_file = os.path.join(home_dir, history_file)
 
     # Check if the database file exists
     db_file_exists = os.path.isfile(db_file)
@@ -48,15 +50,9 @@ def setup():
         assistant_message TEXT,
         system_messages TEXT,
         request_tokens INTEGER,
-        response_tokens INTEGER
+        response_tokens INTEGER,
         cost_estimate FLOAT
     )''')
-
-    # Alter table to add cost_estimate column if it doesn't exist
-    c.execute('''SELECT * FROM history LIMIT 1''')
-    result = c.fetchone()
-    if len(result) < 9:
-        c.execute('''ALTER TABLE history ADD COLUMN cost_estimate FLOAT''')
 
     if not db_file_exists:
         new_turn()
@@ -111,6 +107,7 @@ def min_turn():
 def move_forward():
     global current_turn
     global current_message_role
+    global search_results
 
     if current_message_role != 'assistant':
         current_message_role = 'assistant'
@@ -119,17 +116,29 @@ def move_forward():
     if current_turn == -1:
         return False
 
-    if current_turn == max_turn():
-        return False
 
-    current_turn = current_turn + 1
-    current_message_role = 'user'
-    return True
+    if search_results is None:
+        if current_turn == max_turn():
+            return False
+
+        current_turn = current_turn + 1
+        current_message_role = 'user'
+        return True
+
+    else:
+        for result in search_results:
+            if result > current_turn:
+                set_turn(result)
+                current_message_role = 'user'
+                return True
+
+        return False
 
 def move_backward():
     global current_turn
     global current_message_role
     global response_finished
+    global search_results
 
     if current_message_role != 'user':
         current_message_role = 'user'
@@ -139,10 +148,22 @@ def move_backward():
     if current_turn == min_turn():
         return False
 
-    current_turn = current_turn - 1
-    current_message_role = 'assistant'
-    response_finished = True
-    return True
+    if search_results is None:
+        if current_turn == min_turn():
+            return False
+
+        current_turn = current_turn - 1
+        current_message_role = 'assistant'
+        return True
+
+    else:
+        # Reverse the search results
+        for result in reversed(search_results):
+            if result < current_turn:
+                set_turn(result)
+                current_message_role = 'assistant'
+                return True
+        return False
 
 def get_name(role=None):
     global current_turn
@@ -248,6 +269,17 @@ def get_message_tokens():
     if result is None:
         return 0, 0, 0
     return result[0], result[1], result[2]
+
+def search_messages(query):
+    global current_turn
+    global search_results
+    c.execute('''SELECT id FROM history WHERE user_message LIKE ? OR assistant_message LIKE ? ORDER BY id ASC''', (f'%{query}%', f'%{query}%'))
+    results = c.fetchall()
+
+    search_results = [result[0] for result in results]
+    current_turn = search_results[-1] if len(search_results) > 0 else max_turn()
+
+    return search_results
 
 def info_source(turns=2):
     def history_info_source():

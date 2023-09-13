@@ -1,0 +1,7 @@
+#!/bin/bash
+
+msg=$(printf "Bee, I'm looking for the right way to install $@. Please suggest how to install it, such as \`apt install <package>\`. You can see what my operating system is, so no need to suggest installation instructions for OSes I don't use. Please answer with a bash command.")
+
+#echo -e "$msg\n"
+
+b "$msg"

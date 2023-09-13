@@ -21,7 +21,7 @@ models = {
 
 
     "gpt-4": {
-        "name": "gpt4-0613",
+        "name": "gpt-4-0613",
         "encoder": "gpt-4-0314",
         "context_length": 8000,
         "cost_per_million": {

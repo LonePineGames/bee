@@ -146,6 +146,7 @@ async def main():
         cancelable.append(restore_cursor)
 
         bui.setup_live('Reading')
+        bui.live.refresh()
 
     get_bee_response_task = None
 

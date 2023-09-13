@@ -114,13 +114,13 @@ def context_info_source():
         shell = os.getenv("SHELL")
         editor = os.getenv("EDITOR") or os.getenv("VISUAL")
 
-        context_info = f"""CONTEXT:
-time: {current_time}
-os: {os_name}/{distro_info[0]} {distro_info[1]}/{platform.machine()}
-user: {user}
-cwd: {cwd}
-editor: {editor}
-shell: {os.path.basename(shell)}"""
+        context_info = f"""USER'S CONTEXT:
+Time: {current_time}
+Operating System: {distro_info[0]} {distro_info[1]}/{platform.machine()}
+User: {user}
+PWD: {cwd}
+Editor: {editor}
+Shell: {os.path.basename(shell)}"""
 
         return [{"role": "system", "content": context_info}]
 

@@ -19,6 +19,7 @@ def parse_args():
     parser.add_argument('--blocks', action='store_true', help='Only show code blocks')
     parser.add_argument('--exit-immediately', action='store_true', help='Exit after getting the response')
     parser.add_argument('--show', choices=['user', 'prompt', 'assistant'], help='Show previous user message or entire prompt')
+    parser.add_argument('-s', '--search', help='Search for keyword or phrase.')
     parser.add_argument('-C', '--count-tokens', action='store_true', help='Count tokens in the user message and piped input.')
 
     args, unknown = parser.parse_known_args()
@@ -29,6 +30,15 @@ def parse_args():
         bui.live.update('')
         bui.live.refresh()
         exit()
+
+    if args.search:
+        results = bhistory.search_messages(args.search)
+        if len(results) == 0:
+            bui.setup_live('')
+            bui.live.console.print(Text.assemble(("No results for ", bui.style("code")), (args.search, bui.style("name"))), justify="center")
+            bui.live.update('')
+            bui.live.refresh()
+            exit()
 
     if args.test:
         bconfig.magic = False
@@ -48,17 +58,6 @@ def parse_args():
         if args.show == 'prompt':
             role = 'system'
         bhistory.set_message_role(role)
-
-    #if args.help:
-        #bui.live.update(Text.assemble(("🐝 Bee ", bui.style("name")), ("version 0.1", bui.style("code"))))
-        #print("Usage: b [file] \"Ask Bee a question!\"")
-        #print("Options:")
-        #print("  -m, --model [model]  Choose a language model")
-        #print("  -4, --gpt-4          Use GPT-4")
-        #print("  -3, --gpt-3          Use GPT-3.5-Turbo")
-        #print("  -t, --test           Test output")
-        #print("  -h, --help           Show this help message and exit")
-        #exit()
 
     model = bconfig.model3
     if args.model:

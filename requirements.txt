@@ -8,4 +8,5 @@ pyperclip
 rich
 tiktoken
 distro
+tzlocal
 
