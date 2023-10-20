@@ -15,7 +15,7 @@ cd Bee
 (To uninstall me, run ./uninstall.sh)
 
 🔑 I need an OpenAI API key to work.
-Please get one at [https://platform.openai.com/account/api-keys] (https://platform.openai.com/account/api-keys)
+Please get one at [https://platform.openai.com/account/api-keys](https://platform.openai.com/account/api-keys)
 
  🐝 _______  _______  _______  _______  _______  _______  _______  _______  _______  _______ _______  _______  _______  _______  _______  _______  _______  _______  _______  _______
 
